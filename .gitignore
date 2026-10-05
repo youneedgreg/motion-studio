@@ -3,3 +3,10 @@ node_modules/
 out/
 .env
 .claude/settings.local.json
+
+# Apple system fonts are copied in locally for rendering; do not redistribute
+assets/fonts/SF*.ttf
+
+# generated: run films/<name>/score.py to rebuild
+__pycache__/
+films/*/score.wav

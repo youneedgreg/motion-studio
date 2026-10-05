@@ -1,0 +1,221 @@
+{
+ "bpm": 96,
+ "duration": 15,
+ "sample_rate": 48000,
+ "beats": [
+  0.0,
+  0.625,
+  1.25,
+  1.875,
+  2.5,
+  3.125,
+  3.75,
+  4.375,
+  5.0,
+  5.625,
+  6.25,
+  6.875,
+  7.5,
+  8.125,
+  8.75,
+  9.375,
+  10.0,
+  10.625,
+  11.25,
+  11.875,
+  12.5,
+  13.125,
+  13.75,
+  14.375
+ ],
+ "downbeats": [
+  0.0,
+  2.5,
+  5.0,
+  7.5,
+  10.0,
+  12.5
+ ],
+ "kick": [
+  0.0,
+  0.9375,
+  1.5625,
+  2.5,
+  3.4375,
+  4.0625,
+  5.0,
+  5.9375,
+  6.5625,
+  7.1875,
+  7.5,
+  8.4375,
+  9.0625,
+  10.0,
+  10.9375,
+  11.5625,
+  12.5,
+  13.4375,
+  14.0625,
+  14.6875
+ ],
+ "snare": [
+  0.625,
+  1.875,
+  3.125,
+  4.375,
+  5.625,
+  6.875,
+  8.125,
+  9.375,
+  10.625,
+  11.875,
+  13.125,
+  14.375
+ ],
+ "sfx": [
+  {
+   "t": 0.0,
+   "name": "word-i",
+   "sfx": "slam"
+  },
+  {
+   "t": 0.3125,
+   "name": "word-make",
+   "sfx": "slam"
+  },
+  {
+   "t": 0.625,
+   "name": "word-things",
+   "sfx": "slam"
+  },
+  {
+   "t": 1.25,
+   "name": "word-move",
+   "sfx": "stretch"
+  },
+  {
+   "t": 1.5625,
+   "name": "pop-m",
+   "sfx": "pop"
+  },
+  {
+   "t": 1.875,
+   "name": "pop-v",
+   "sfx": "pop"
+  },
+  {
+   "t": 2.1875,
+   "name": "pop-e",
+   "sfx": "pop"
+  },
+  {
+   "t": 2.5,
+   "name": "ring",
+   "sfx": "impact"
+  },
+  {
+   "t": 3.125,
+   "name": "squircle",
+   "sfx": "morph"
+  },
+  {
+   "t": 3.75,
+   "name": "split-4",
+   "sfx": "morph"
+  },
+  {
+   "t": 4.0625,
+   "name": "split-16",
+   "sfx": "morph"
+  },
+  {
+   "t": 4.375,
+   "name": "mosaic",
+   "sfx": "shimmer"
+  },
+  {
+   "t": 5.0,
+   "name": "weight",
+   "sfx": "impact"
+  },
+  {
+   "t": 5.625,
+   "name": "bounce-1",
+   "sfx": "bounce"
+  },
+  {
+   "t": 6.25,
+   "name": "bounce-2",
+   "sfx": "bounce"
+  },
+  {
+   "t": 6.875,
+   "name": "bounce-3",
+   "sfx": "bounce"
+  },
+  {
+   "t": 7.5,
+   "name": "rings",
+   "sfx": "impact"
+  },
+  {
+   "t": 8.125,
+   "name": "snap-1",
+   "sfx": "ratchet"
+  },
+  {
+   "t": 8.75,
+   "name": "snap-2",
+   "sfx": "ratchet"
+  },
+  {
+   "t": 9.375,
+   "name": "collapse",
+   "sfx": "ratchet"
+  },
+  {
+   "t": 10.0,
+   "name": "doors",
+   "sfx": "impact"
+  },
+  {
+   "t": 10.625,
+   "name": "ease-inout",
+   "sfx": "curve"
+  },
+  {
+   "t": 11.25,
+   "name": "ease-back",
+   "sfx": "curve"
+  },
+  {
+   "t": 11.875,
+   "name": "ease-spring",
+   "sfx": "curve"
+  },
+  {
+   "t": 12.5,
+   "name": "name",
+   "sfx": "impact"
+  },
+  {
+   "t": 13.125,
+   "name": "period",
+   "sfx": "bounce"
+  },
+  {
+   "t": 13.75,
+   "name": "tagline",
+   "sfx": "pop"
+  },
+  {
+   "t": 14.375,
+   "name": "outro",
+   "sfx": "reverse"
+  }
+ ],
+ "loudness": {
+  "integrated_lufs": -13.9,
+  "true_peak_dbtp": -4.9
+ }
+}
