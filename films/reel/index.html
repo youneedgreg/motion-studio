@@ -1,0 +1,26 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>reel</title>
+<style>
+  @font-face { font-family: 'Disp'; src: url('../../assets/fonts/SFNS.ttf') format('truetype'); font-weight: 1 1000; font-stretch: 30% 150%; }
+  @font-face { font-family: 'Mono'; src: url('../../assets/fonts/SFNSMono.ttf') format('truetype'); font-weight: 295 900; }
+  html, body { margin: 0; background: #111; overflow: hidden; }
+  #stage { position: relative; width: 1080px; height: 1920px; overflow: hidden; background: #111; }
+  #stage > canvas, #dom { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; }
+  #dom { overflow: hidden; }
+  .scene { position: absolute; inset: 0; display: none; }
+  .line { position: absolute; left: 0; top: 0; white-space: pre; line-height: 1; font-family: 'Disp'; font-kerning: normal; }
+  .g { display: inline-block; }
+</style>
+</head>
+<body>
+<div id="stage">
+  <canvas id="under" width="1080" height="1920"></canvas>
+  <div id="dom"></div>
+  <canvas id="over" width="1080" height="1920"></canvas>
+</div>
+<script type="module" src="./reel.js"></script>
+</body>
+</html>
