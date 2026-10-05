@@ -1,0 +1,41 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>preview-test</title>
+<style>
+  html, body { margin: 0; background: #111; }
+  canvas { display: block; }
+</style>
+</head>
+<body>
+<canvas id="c" width="400" height="400"></canvas>
+<script>
+  const W = 400, H = 400, DURATION = 2, R = 30;
+  const ctx = document.getElementById('c').getContext('2d');
+
+  // Pure function of time: paints frame t (seconds).
+  window.seek = function seek(t) {
+    const p = Math.min(Math.max(t / DURATION, 0), 1);
+    const x = R + p * (W - 2 * R);
+    ctx.fillStyle = '#111';
+    ctx.fillRect(0, 0, W, H);
+    ctx.fillStyle = '#ff5a1f';
+    ctx.beginPath();
+    ctx.arc(x, H / 2, R, 0, Math.PI * 2);
+    ctx.fill();
+  };
+
+  window.seek(0);
+
+  if (!navigator.webdriver) { // preview-only
+    const start = performance.now(); // preview-only
+    const tick = (now) => { // preview-only
+      window.seek(((now - start) / 1000) % DURATION); // preview-only
+      requestAnimationFrame(tick); // preview-only
+    }; // preview-only
+    requestAnimationFrame(tick); // preview-only
+  } // preview-only
+</script>
+</body>
+</html>
