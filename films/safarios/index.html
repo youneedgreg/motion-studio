@@ -1,0 +1,30 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>safarios</title>
+<style>
+  @font-face { font-family: 'Inter'; src: url('../../assets/fonts/inter/InterVariable.woff2') format('woff2'); font-weight: 100 900; }
+  @font-face { font-family: 'Fraunces'; src: url('../../assets/fonts/fraunces/fraunces-latin-full-italic.woff2') format('woff2'); font-weight: 100 900; font-style: italic; }
+  html, body { margin: 0; background: #0e2a1f; overflow: hidden; }
+  #stage { position: relative; width: 1920px; height: 1080px; overflow: hidden; background: #f6f1e7;
+    font-family: 'Inter'; color: #14211a; font-optical-sizing: auto; -webkit-font-smoothing: antialiased; }
+  .layer { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; }
+  .abs { position: absolute; }
+  .mask { display: inline-block; overflow: hidden; vertical-align: bottom; padding: 0.04em 0.12em 0.16em 0.02em; margin: -0.04em -0.12em -0.16em -0.02em; }
+  .mask > span { display: inline-block; }
+  .pill { position: absolute; white-space: pre; border-radius: 999px; font-weight: 600; line-height: 1; }
+  .card { position: absolute; background: #fff; border-radius: 28px; }
+  .disp { font-weight: 800; font-variation-settings: 'opsz' 32; letter-spacing: -0.035em; line-height: 1; white-space: pre; }
+  .serif { font-family: 'Fraunces'; font-style: italic; font-weight: 400; letter-spacing: -0.02em; }
+  .num { font-variant-numeric: tabular-nums; }
+</style>
+</head>
+<body>
+<div id="stage"></div>
+<svg width="0" height="0" style="position:absolute">
+  <filter id="mblur" x="-10%" y="-10%" width="120%" height="120%"><feGaussianBlur id="mblurStd" stdDeviation="0 0"/></filter>
+</svg>
+<script type="module" src="./film.js"></script>
+</body>
+</html>

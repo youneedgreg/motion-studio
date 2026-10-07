@@ -1,0 +1,263 @@
+{
+ "title": "safarios",
+ "width": 1920,
+ "height": 1080,
+ "fps": 60,
+ "duration": 20,
+ "bpm": 120,
+ "beatsPerBar": 4,
+ "loop": false,
+ "scenes": [
+  "hook",
+  "promise",
+  "pipeline",
+  "costing",
+  "itinerary",
+  "dispatch",
+  "pills",
+  "list",
+  "end"
+ ],
+ "cues": [
+  {
+   "beat": 0,
+   "name": "hook",
+   "sfx": "pop-big"
+  },
+  {
+   "beat": 0.5,
+   "name": "chip-1",
+   "sfx": "tick"
+  },
+  {
+   "beat": 1.0,
+   "name": "chip-2",
+   "sfx": "tick"
+  },
+  {
+   "beat": 1.5,
+   "name": "chip-3",
+   "sfx": "tick"
+  },
+  {
+   "beat": 2.0,
+   "name": "chip-4",
+   "sfx": "tick"
+  },
+  {
+   "beat": 2.5,
+   "name": "chip-5",
+   "sfx": "tick"
+  },
+  {
+   "beat": 3.0,
+   "name": "chip-6",
+   "sfx": "tick"
+  },
+  {
+   "beat": 3.5,
+   "name": "chip-7",
+   "sfx": "tick"
+  },
+  {
+   "beat": 4,
+   "name": "promise",
+   "sfx": "zoom-hit"
+  },
+  {
+   "beat": 4.5,
+   "name": "word-2",
+   "sfx": "word"
+  },
+  {
+   "beat": 5,
+   "name": "word-3",
+   "sfx": "word"
+  },
+  {
+   "beat": 5.5,
+   "name": "word-4",
+   "sfx": "word"
+  },
+  {
+   "beat": 6.0,
+   "name": "mod-1",
+   "sfx": "tick-soft"
+  },
+  {
+   "beat": 6.25,
+   "name": "mod-2",
+   "sfx": "tick-soft"
+  },
+  {
+   "beat": 6.5,
+   "name": "askbar",
+   "sfx": "swoosh"
+  },
+  {
+   "beat": 6.5,
+   "name": "mod-3",
+   "sfx": "tick-soft"
+  },
+  {
+   "beat": 6.75,
+   "name": "mod-4",
+   "sfx": "tick-soft"
+  },
+  {
+   "beat": 7.0,
+   "name": "mod-5",
+   "sfx": "tick-soft"
+  },
+  {
+   "beat": 7.5,
+   "name": "send",
+   "sfx": "pop"
+  },
+  {
+   "beat": 8,
+   "name": "pipeline",
+   "sfx": "zoom-hit"
+  },
+  {
+   "beat": 9,
+   "name": "hop-1",
+   "sfx": "pluck"
+  },
+  {
+   "beat": 10,
+   "name": "hop-2",
+   "sfx": "pluck"
+  },
+  {
+   "beat": 11,
+   "name": "hop-3",
+   "sfx": "pluck-land"
+  },
+  {
+   "beat": 12,
+   "name": "canvas",
+   "sfx": "push"
+  },
+  {
+   "beat": 12.5,
+   "name": "totals",
+   "sfx": "count"
+  },
+  {
+   "beat": 13.5,
+   "name": "healthy",
+   "sfx": "pop"
+  },
+  {
+   "beat": 14.5,
+   "name": "advisor",
+   "sfx": "chord"
+  },
+  {
+   "beat": 16,
+   "name": "itinerary",
+   "sfx": "push"
+  },
+  {
+   "beat": 17,
+   "name": "day-3",
+   "sfx": "swish"
+  },
+  {
+   "beat": 18,
+   "name": "callout-1",
+   "sfx": "pop"
+  },
+  {
+   "beat": 19,
+   "name": "phone",
+   "sfx": "chime"
+  },
+  {
+   "beat": 20,
+   "name": "driver",
+   "sfx": "push"
+  },
+  {
+   "beat": 21,
+   "name": "status-3",
+   "sfx": "ping"
+  },
+  {
+   "beat": 22,
+   "name": "callout-2",
+   "sfx": "pop"
+  },
+  {
+   "beat": 23,
+   "name": "alert",
+   "sfx": "warn"
+  },
+  {
+   "beat": 24,
+   "name": "pullback",
+   "sfx": "push"
+  },
+  {
+   "beat": 24.5,
+   "name": "pill-1",
+   "sfx": "pill"
+  },
+  {
+   "beat": 25.5,
+   "name": "pill-2",
+   "sfx": "pill"
+  },
+  {
+   "beat": 26.5,
+   "name": "pill-3",
+   "sfx": "pill"
+  },
+  {
+   "beat": 28,
+   "name": "field-1",
+   "sfx": "field"
+  },
+  {
+   "beat": 29,
+   "name": "field-2",
+   "sfx": "field"
+  },
+  {
+   "beat": 30,
+   "name": "field-3",
+   "sfx": "field"
+  },
+  {
+   "beat": 31,
+   "name": "field-4",
+   "sfx": "field"
+  },
+  {
+   "beat": 32,
+   "name": "end",
+   "sfx": "end"
+  },
+  {
+   "beat": 33,
+   "name": "eyebrow",
+   "sfx": "word"
+  },
+  {
+   "beat": 34,
+   "name": "line-1",
+   "sfx": "word"
+  },
+  {
+   "beat": 35.5,
+   "name": "line-2",
+   "sfx": "word"
+  },
+  {
+   "beat": 37,
+   "name": "cta",
+   "sfx": "cta"
+  }
+ ]
+}

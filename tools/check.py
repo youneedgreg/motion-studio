@@ -18,7 +18,7 @@ BEATS = json.loads((ROOT / film / 'beats.json').read_text())
 FPS, W, H, DUR = T['fps'], T['width'], T['height'], T['duration']
 B = 60 / T['bpm']
 OUT = ROOT / 'out'
-CHK = OUT / 'check'
+CHK = OUT / 'check' / name  # per film, so two checks never share scratch files
 CHK.mkdir(parents=True, exist_ok=True)
 final = OUT / f'{name}.mp4'
 report = []
@@ -98,26 +98,44 @@ grid16 = np.arange(0, DUR + 1e-9, B / 4)
 def off_grid(ts):
     return np.array([t - grid16[np.argmin(np.abs(grid16 - t))] for t in ts])
 
-# visual: first frame whose change from the previous frame rises clearly above the pre-cue baseline
+# visual: for every cue, the first frame where the element that cue moves visibly changes.
+# The film reports each cue's element box (render.mjs --cue-boxes); cues without one (camera moves,
+# wipes, cuts) are measured over the whole frame. A cue passes when its first visible change lands
+# within one frame of its sound (every SFX sits exactly on its cue, checked below).
+boxes_path = CHK / 'cue-boxes.json'
+run(['node', 'render.mjs', str(film), '--cue-boxes', str(boxes_path)])
+boxes = json.loads(boxes_path.read_text())
 cues = [(c['name'], c['beat'] * B) for c in T['cues']]
-rows, late = [], []
+rows, lat, fails = [], [], []
 for nm, t in cues:
-    f = int(round(t * FPS))
-    base = np.median(d[max(0, f - 8):max(1, f - 2)]) if f > 2 else 0.0
-    win = d[max(0, f - 3):f + 8]
-    thr = base + max(0.4, 0.25 * (win.max() - base))
-    k = max(0, f - 3) + int(np.argmax(win > thr))  # change from frame k to k+1
-    late.append((k + 1 - f) / FPS * 1000)           # +16.7 ms = moves on the first frame after the cue
-    rows.append(f'{nm}:{late[-1]:+.0f}')
-late = np.array(late)
-say(f'visual sync   first visible change after each cue: median {np.median(late):+.1f} ms, '
-    f'range {late.min():+.0f}..{late.max():+.0f} ms ({(np.abs(late) <= 1000 / FPS + 0.1).mean() * 100:.0f}% within 1 frame)')
+    bx = boxes.get(nm)
+    x, y, w, h = (0, 0, W, H) if not bx else bx
+    x0, y0 = max(0, int(x) - 16), max(0, int(y) - 16)
+    x1, y1 = min(W, int(x + w) + 16), min(H, int(y + h) + 16)
+    cw, ch = (x1 - x0) // 2 * 2, (y1 - y0) // 2 * 2
+    first = int(np.ceil(t * FPS - 1e-6))          # first frame whose time is at or after the cue
+    start = max(0, first - 4)
+    raw = subprocess.run(['ffmpeg', '-v', 'error', '-ss', f'{start / FPS:.6f}', '-i', str(final), '-frames:v', '10',
+                          '-vf', f'crop={cw}:{ch}:{x0}:{y0},format=gray', '-f', 'rawvideo', '-'], capture_output=True, cwd=ROOT).stdout
+    F = np.frombuffer(raw, np.uint8).reshape(-1, ch, cw).astype(np.float32)
+    dd = np.abs(np.diff(F, axis=0)).mean(axis=(1, 2))   # dd[k]: change into frame start + k + 1
+    frames = np.arange(start + 1, start + 1 + len(dd))
+    # onset = the change jumps relative to the frame before it (steady motion already under way doesn't count)
+    prev = np.concatenate([[dd[0]], dd[:-1]])
+    hit = np.where((frames >= first - 2) & (dd > np.maximum(1.0, 1.5 * prev + 0.5)))[0]
+    if first == 0:  # a cue on the film's first frame is on time by definition
+        hit = np.array([-1]); frames = np.concatenate([[0], frames])
+    if not len(hit):
+        rows.append(f'{nm}:none'); fails.append(nm); continue
+    ms = (frames[max(0, hit[0])] / FPS - t) * 1000 if first else 0.0
+    lat.append(ms)
+    rows.append(f'{nm}:{ms:+.0f}')
+    if abs(ms) > 1000 / FPS + 0.5:
+        fails.append(nm)
+lat = np.array(lat)
+say(f'cue sync      {len(cues) - len(fails)}/{len(cues)} cues: first visible change of the cued element within 1 frame of its sound '
+    f'(median {np.median(lat):+.1f} ms, range {lat.min():+.0f}..{lat.max():+.0f} ms)' + ('  OK' if not fails else f'  FAIL: {", ".join(fails)}'))
 say('              ' + '  '.join(rows))
-onset = np.maximum(0, d[1:] - np.maximum(d[:-1], 1e-3))  # rise in change; index i ↔ change into frame i+2
-# all strong visual onsets, wherever they occur
-strong = np.where(onset > np.percentile(onset, 97))[0] + 2
-voff = off_grid(strong / FPS) * 1000
-say(f'visual onsets {len(strong)} strongest: {(np.abs(voff) <= 1000 / FPS + 0.1).mean() * 100:.0f}% within 1 frame of the 16th grid')
 
 # audio: onsets in the final mix vs the 16th grid, and every SFX cue against the visual cue it belongs to
 import librosa

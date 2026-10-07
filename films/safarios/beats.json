@@ -1,0 +1,355 @@
+{
+ "bpm": 120,
+ "duration": 20,
+ "sample_rate": 48000,
+ "beats": [
+  0.0,
+  0.5,
+  1.0,
+  1.5,
+  2.0,
+  2.5,
+  3.0,
+  3.5,
+  4.0,
+  4.5,
+  5.0,
+  5.5,
+  6.0,
+  6.5,
+  7.0,
+  7.5,
+  8.0,
+  8.5,
+  9.0,
+  9.5,
+  10.0,
+  10.5,
+  11.0,
+  11.5,
+  12.0,
+  12.5,
+  13.0,
+  13.5,
+  14.0,
+  14.5,
+  15.0,
+  15.5,
+  16.0,
+  16.5,
+  17.0,
+  17.5,
+  18.0,
+  18.5,
+  19.0,
+  19.5
+ ],
+ "downbeats": [
+  0.0,
+  2.0,
+  4.0,
+  6.0,
+  8.0,
+  10.0,
+  12.0,
+  14.0,
+  16.0,
+  18.0
+ ],
+ "kick": [
+  0.0,
+  0.5,
+  1.0,
+  1.5,
+  2.0,
+  2.5,
+  3.0,
+  3.5,
+  4.0,
+  4.5,
+  5.0,
+  5.5,
+  6.0,
+  6.5,
+  7.0,
+  7.5,
+  8.0,
+  8.5,
+  9.0,
+  9.5,
+  10.0,
+  10.5,
+  11.0,
+  11.5,
+  12.0,
+  12.5,
+  13.0,
+  13.5,
+  14.0,
+  14.5,
+  15.0,
+  15.5
+ ],
+ "snare": [
+  2.5,
+  3.5,
+  4.5,
+  5.5,
+  6.5,
+  7.5,
+  8.5,
+  9.5,
+  10.5,
+  11.5,
+  12.5,
+  13.5,
+  14.5,
+  15.5
+ ],
+ "sfx": [
+  {
+   "t": 0.0,
+   "name": "hook",
+   "sfx": "pop-big"
+  },
+  {
+   "t": 0.25,
+   "name": "chip-1",
+   "sfx": "tick"
+  },
+  {
+   "t": 0.5,
+   "name": "chip-2",
+   "sfx": "tick"
+  },
+  {
+   "t": 0.75,
+   "name": "chip-3",
+   "sfx": "tick"
+  },
+  {
+   "t": 1.0,
+   "name": "chip-4",
+   "sfx": "tick"
+  },
+  {
+   "t": 1.25,
+   "name": "chip-5",
+   "sfx": "tick"
+  },
+  {
+   "t": 1.5,
+   "name": "chip-6",
+   "sfx": "tick"
+  },
+  {
+   "t": 1.75,
+   "name": "chip-7",
+   "sfx": "tick"
+  },
+  {
+   "t": 2.0,
+   "name": "promise",
+   "sfx": "zoom-hit"
+  },
+  {
+   "t": 2.25,
+   "name": "word-2",
+   "sfx": "word"
+  },
+  {
+   "t": 2.5,
+   "name": "word-3",
+   "sfx": "word"
+  },
+  {
+   "t": 2.75,
+   "name": "word-4",
+   "sfx": "word"
+  },
+  {
+   "t": 3.0,
+   "name": "mod-1",
+   "sfx": "tick-soft"
+  },
+  {
+   "t": 3.125,
+   "name": "mod-2",
+   "sfx": "tick-soft"
+  },
+  {
+   "t": 3.25,
+   "name": "askbar",
+   "sfx": "swoosh"
+  },
+  {
+   "t": 3.25,
+   "name": "mod-3",
+   "sfx": "tick-soft"
+  },
+  {
+   "t": 3.375,
+   "name": "mod-4",
+   "sfx": "tick-soft"
+  },
+  {
+   "t": 3.5,
+   "name": "mod-5",
+   "sfx": "tick-soft"
+  },
+  {
+   "t": 3.75,
+   "name": "send",
+   "sfx": "pop"
+  },
+  {
+   "t": 4.0,
+   "name": "pipeline",
+   "sfx": "zoom-hit"
+  },
+  {
+   "t": 4.5,
+   "name": "hop-1",
+   "sfx": "pluck"
+  },
+  {
+   "t": 5.0,
+   "name": "hop-2",
+   "sfx": "pluck"
+  },
+  {
+   "t": 5.5,
+   "name": "hop-3",
+   "sfx": "pluck-land"
+  },
+  {
+   "t": 6.0,
+   "name": "canvas",
+   "sfx": "push"
+  },
+  {
+   "t": 6.25,
+   "name": "totals",
+   "sfx": "count"
+  },
+  {
+   "t": 6.75,
+   "name": "healthy",
+   "sfx": "pop"
+  },
+  {
+   "t": 7.25,
+   "name": "advisor",
+   "sfx": "chord"
+  },
+  {
+   "t": 8.0,
+   "name": "itinerary",
+   "sfx": "push"
+  },
+  {
+   "t": 8.5,
+   "name": "day-3",
+   "sfx": "swish"
+  },
+  {
+   "t": 9.0,
+   "name": "callout-1",
+   "sfx": "pop"
+  },
+  {
+   "t": 9.5,
+   "name": "phone",
+   "sfx": "chime"
+  },
+  {
+   "t": 10.0,
+   "name": "driver",
+   "sfx": "push"
+  },
+  {
+   "t": 10.5,
+   "name": "status-3",
+   "sfx": "ping"
+  },
+  {
+   "t": 11.0,
+   "name": "callout-2",
+   "sfx": "pop"
+  },
+  {
+   "t": 11.5,
+   "name": "alert",
+   "sfx": "warn"
+  },
+  {
+   "t": 12.0,
+   "name": "pullback",
+   "sfx": "push"
+  },
+  {
+   "t": 12.25,
+   "name": "pill-1",
+   "sfx": "pill"
+  },
+  {
+   "t": 12.75,
+   "name": "pill-2",
+   "sfx": "pill"
+  },
+  {
+   "t": 13.25,
+   "name": "pill-3",
+   "sfx": "pill"
+  },
+  {
+   "t": 14.0,
+   "name": "field-1",
+   "sfx": "field"
+  },
+  {
+   "t": 14.5,
+   "name": "field-2",
+   "sfx": "field"
+  },
+  {
+   "t": 15.0,
+   "name": "field-3",
+   "sfx": "field"
+  },
+  {
+   "t": 15.5,
+   "name": "field-4",
+   "sfx": "field"
+  },
+  {
+   "t": 16.0,
+   "name": "end",
+   "sfx": "end"
+  },
+  {
+   "t": 16.5,
+   "name": "eyebrow",
+   "sfx": "word"
+  },
+  {
+   "t": 17.0,
+   "name": "line-1",
+   "sfx": "word"
+  },
+  {
+   "t": 17.75,
+   "name": "line-2",
+   "sfx": "word"
+  },
+  {
+   "t": 18.5,
+   "name": "cta",
+   "sfx": "cta"
+  }
+ ],
+ "loudness": {
+  "integrated_lufs": -14.0,
+  "true_peak_dbtp": -4.0
+ }
+}

@@ -16,7 +16,7 @@ const E8 = B / 2, E16 = B / 4;
 const CUE = Object.fromEntries(T.cues.map((c) => [c.name, c.beat * B]));
 const INK = '#111111', PAPER = '#EEEAE2', ACCENT = '#FF5A1F';
 const M = 72, CW = W - 2 * M;       // margin, content width
-const BASE = 0.8779, CAP = 0.7046;  // SF Pro: baseline below the top of a line-height:1 box; cap height (em)
+const BASE = 0.8638, CAP = 0.7275;  // Inter: baseline below the top of a line-height:1 box; cap height (em)
 const AXIS_Y = 1350;                // where scene 4 collapses and scene 5's time axis lives
 
 const under = document.getElementById('under').getContext('2d');
@@ -33,10 +33,22 @@ function node(tag, parent, cls, style) {
 }
 function wordLine(parent, text, color) {
   const line = node('div', parent, 'line', { color });
-  const glyphs = [...text].map((ch) => { const s = node('span', line, 'g'); s.textContent = ch; return s; });
+  // outer span takes motion transforms; inner span carries the emulated width (see setAxes)
+  const glyphs = [...text].map((ch) => { const s = node('span', line, 'g'); node('span', s, 'gi').textContent = ch; return s; });
   return { line, glyphs, fs: 100, baseline: 0 };
 }
-const setAxes = (g, w, d) => { g.style.fontVariationSettings = `"wght" ${clamp(w, 1, 1000).toFixed(1)}, "wdth" ${clamp(d, 30, 150).toFixed(2)}`; };
+// Axis values are kept on the old 1-1000 weight / 30-150 width scales the choreography was written in.
+// Weight maps onto Inter's 100-900. Inter has no width axis, so width is a horizontal scale of the
+// glyph with its advance corrected, so neighbours re-space as they would with a real width axis.
+const interW = (w) => 100 + ((clamp(w, 1, 1000) - 1) * 800) / 999;
+const widthScale = (d) => { d = clamp(d, 30, 150); return d <= 100 ? lerp(0.6, 1, (d - 30) / 70) : lerp(1, 1.3, (d - 100) / 50); };
+const setAxes = (g, w, d) => {
+  g.style.fontVariationSettings = `"wght" ${interW(w).toFixed(1)}`;
+  const inner = g.firstChild, k = widthScale(d);
+  inner.style.transform = `scaleX(${k.toFixed(4)})`;
+  // in em, so the correction survives a later font-size change (fit() measures at 100px, then resizes)
+  inner.style.marginRight = `${((k - 1) * inner.offsetWidth / parseFloat(getComputedStyle(g).fontSize)).toFixed(4)}em`;
+};
 function place(L, fs, baseline, x = M) {
   L.fs = fs; L.baseline = baseline;
   Object.assign(L.line.style, { fontSize: `${fs}px`, left: `${x}px`, top: `${baseline - BASE * fs}px` });
@@ -52,7 +64,7 @@ function maskAtBaseline(L) {
   L.line.style.clipPath = `polygon(-50% -300%, 150% -300%, 150% ${b}px, -50% ${b}px)`;
 }
 function mono(ctx, text, x, y, color, size = 44, weight = 500) {
-  ctx.font = `${weight} ${size}px Mono`;
+  ctx.font = `${weight} ${size}px UI`;
   ctx.fillStyle = color;
   ctx.textBaseline = 'alphabetic';
   ctx.fillText(text, x, y);
@@ -79,7 +91,7 @@ const fill = (ctx, c) => { ctx.fillStyle = c; ctx.fillRect(0, 0, W, H); };
 const PAPER_DIM = 'rgba(238,234,226,0.72)', INK_DIM = 'rgba(17,17,17,0.72)';
 
 await document.fonts.load('900 100px Disp');
-await document.fonts.load('500 40px Mono');
+await document.fonts.load('500 40px UI');
 await document.fonts.ready;
 
 // ---------- 1 · type ----------
@@ -89,7 +101,7 @@ const s1 = (() => {
   const L1 = wordLine(wrap, 'I MAKE', PAPER);
   const L2 = wordLine(wrap, 'THINGS', PAPER);
   const L3 = wordLine(wrap, 'MOVE', ACCENT);
-  const readout = node('div', wrap, null, { position: 'absolute', left: `${M}px`, font: '500 44px Mono', color: PAPER_DIM, whiteSpace: 'pre' });
+  const readout = node('div', wrap, null, { position: 'absolute', left: `${M}px`, font: '500 44px UI', fontVariantNumeric: 'tabular-nums', color: PAPER_DIM, whiteSpace: 'pre' });
   return { el, wrap, L1, L2, L3, readout, origin: { x: 540, y: 960 } };
 })();
 const S1_AXES = { L1: [800, 112], L2: [800, 76], L3: [1000, 64] };
@@ -396,7 +408,7 @@ function drawS4(t) {
       const th = (360 / n) * i;
       const f = (Math.cos(((a + th) * Math.PI) / 180) + 1) / 2; // 1 = facing camera
       g.style.color = mix(ACCENT, INK, 0.3 + 0.7 * Math.pow(f, 1.2));
-      g.style.fontVariationSettings = `"wght" ${(200 + 800 * Math.pow(f, 1.5)).toFixed(1)}`;
+      g.style.fontVariationSettings = `"wght" ${interW(200 + 800 * Math.pow(f, 1.5)).toFixed(1)}`;
       g.style.transform = `rotateY(${th}deg) translateZ(${R}px) translate(-50%, ${-(BASE - CAP / 2) * 100}%)`;
     });
   });
@@ -561,7 +573,7 @@ function drawS6(t) {
     if (n <= 0) continue;
     const s = ln.text.slice(0, n);
     mono(ctx, s, M, baseline + ln.dy, ln.color, ln.size);
-    ctx.font = `500 ${ln.size}px Mono`;
+    ctx.font = `500 ${ln.size}px UI`;
     cursor = { x: M + ctx.measureText(s).width + 6, y: baseline + ln.dy, size: ln.size };
   }
   if (cursor && Math.floor(t / E8) % 2 === 0 && out < 0.34) {
