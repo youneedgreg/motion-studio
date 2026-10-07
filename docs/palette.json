@@ -1,0 +1,86 @@
+{
+ "dominant": [
+  {
+   "hex": "#fafafa",
+   "share": 0.262
+  },
+  {
+   "hex": "#f4e4e2",
+   "share": 0.172
+  },
+  {
+   "hex": "#ebe6f4",
+   "share": 0.124
+  },
+  {
+   "hex": "#e9e6e8",
+   "share": 0.093
+  },
+  {
+   "hex": "#f0eef4",
+   "share": 0.038
+  },
+  {
+   "hex": "#f4f2ed",
+   "share": 0.026
+  },
+  {
+   "hex": "#0c0c0c",
+   "share": 0.021
+  },
+  {
+   "hex": "#cad1d6",
+   "share": 0.017
+  },
+  {
+   "hex": "#cccfda",
+   "share": 0.013
+  },
+  {
+   "hex": "#b59a1b",
+   "share": 0.01
+  }
+ ],
+ "accents": [
+  {
+   "hex": "#b79b1a",
+   "share": 0.055
+  },
+  {
+   "hex": "#dd6145",
+   "share": 0.053
+  },
+  {
+   "hex": "#3c89e8",
+   "share": 0.05
+  },
+  {
+   "hex": "#d18481",
+   "share": 0.05
+  },
+  {
+   "hex": "#548cdc",
+   "share": 0.038
+  },
+  {
+   "hex": "#f5a036",
+   "share": 0.03
+  },
+  {
+   "hex": "#569cf4",
+   "share": 0.029
+  },
+  {
+   "hex": "#c64324",
+   "share": 0.027
+  },
+  {
+   "hex": "#7f40c9",
+   "share": 0.027
+  },
+  {
+   "hex": "#d94421",
+   "share": 0.027
+  }
+ ]
+}

@@ -11,7 +11,9 @@
 
 ## Look (house style)
 - Banned defaults: centered title on gradient, everything fading in, corner labels and frame borders,
-  glow on UI chrome, generic particle bursts.
+  glow on UI chrome, generic particle bursts, near-black ground with a single orange accent,
+  condensed all-caps display type, monospace parameter readouts, technique-demo tiles
+  (easing graphs, bounce trails), coloured-dot full stops.
 - One display face, one UI face. One accent color unless the brief says otherwise.
 - Something new happens on screen every 2 to 4 seconds.
 

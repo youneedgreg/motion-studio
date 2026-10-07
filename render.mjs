@@ -76,7 +76,7 @@ async function render() {
   else for (let i = first; i < last; i++) indices.push(i);
   const slices = Array.from({ length: workers }, (_, w) => indices.filter((_, j) => j % workers === w));
 
-  await Promise.all(slices.map(async (slice) => {
+  async function openPage() {
     const ctx = await browser.newContext({ viewport: { width: T.width, height: T.height }, deviceScaleFactor: 1 });
     await ctx.route('**/*', (route) => {
       const u = new URL(route.request().url());
@@ -88,6 +88,33 @@ async function render() {
     page.on('pageerror', (e) => { console.error('page error:', e.message); process.exitCode = 1; });
     await page.goto(pageUrl);
     await page.waitForFunction(() => window.filmReady === true, null, { timeout: 30000 });
+    return { ctx, page };
+  }
+
+  // --cue-boxes file.json: the screen box of the element each cue moves (union of just before and
+  // just after the cue), or null when the cue changes the whole frame. Used by tools/check.py.
+  if (args['cue-boxes']) {
+    const { ctx, page } = await openPage();
+    const boxes = {};
+    for (const c of T.cues) {
+      const t = (c.beat * 60) / T.bpm;
+      const at = async (tt) => page.evaluate(([name, x]) => { window.seek(x); return window.cueBox ? window.cueBox(name) : null; }, [c.name, tt]);
+      const a = await at(Math.max(0, t - 0.05)), b = await at(t + 0.45);
+      const bs = [a, b].filter(Boolean);
+      if (!bs.length) { boxes[c.name] = null; continue; }
+      const x0 = Math.min(...bs.map((r) => r[0])), y0 = Math.min(...bs.map((r) => r[1]));
+      const x1 = Math.max(...bs.map((r) => r[0] + r[2])), y1 = Math.max(...bs.map((r) => r[1] + r[3]));
+      boxes[c.name] = [x0, y0, x1 - x0, y1 - y0].map((v) => Math.round(v));
+    }
+    await ctx.close();
+    await browser.close();
+    writeFileSync(path.resolve(args['cue-boxes']), JSON.stringify(boxes, null, 1));
+    console.log(`wrote cue boxes for ${Object.keys(boxes).length} cues`);
+    return;
+  }
+
+  await Promise.all(slices.map(async (slice) => {
+    const { ctx, page } = await openPage();
     for (const i of slice) {
       await page.evaluate((t) => window.seek(t), i / fps);
       await page.screenshot({ path: path.join(framesDir, stills ? `t_${(i / fps).toFixed(3)}.png` : `f_${String(i - first).padStart(5, "0")}.png`), type: 'png' });
