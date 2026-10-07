@@ -1,0 +1,166 @@
+{
+ "title": "florios-morph",
+ "width": 1080,
+ "height": 1920,
+ "fps": 60,
+ "duration": 12,
+ "bpm": 120,
+ "beatsPerBar": 3,
+ "loop": true,
+ "states": [
+  {
+   "t": 0.0,
+   "name": "role",
+   "w": 900,
+   "h": 200,
+   "r": 100,
+   "fill": "#0f172a",
+   "action": "Click \"Switch role\""
+  },
+  {
+   "t": 1.5,
+   "name": "kpi",
+   "w": 880,
+   "h": 600,
+   "r": 48,
+   "fill": "#0f172a",
+   "action": "Click the role pill"
+  },
+  {
+   "t": 3.0,
+   "name": "packhouse",
+   "w": 960,
+   "h": 260,
+   "r": 32,
+   "fill": "#10b981",
+   "action": "Click the KPI card"
+  },
+  {
+   "t": 4.5,
+   "name": "grade",
+   "w": 560,
+   "h": 560,
+   "r": 280,
+   "fill": "#f8fafc",
+   "action": "Click \"Grade now\""
+  },
+  {
+   "t": 6.0,
+   "name": "coldroom",
+   "w": 380,
+   "h": 960,
+   "r": 190,
+   "fill": "#1e293b",
+   "action": "Click \"Cold room handover\""
+  },
+  {
+   "t": 7.5,
+   "name": "search",
+   "w": 920,
+   "h": 150,
+   "r": 75,
+   "fill": "#f8fafc",
+   "action": "\u2318K"
+  },
+  {
+   "t": 9.0,
+   "name": "order",
+   "w": 880,
+   "h": 700,
+   "r": 40,
+   "fill": "#0f172a",
+   "action": "\u21b5"
+  },
+  {
+   "t": 10.5,
+   "name": "dispatch",
+   "w": 960,
+   "h": 300,
+   "r": 150,
+   "fill": "#10b981",
+   "action": "Click \"Route\""
+  }
+ ],
+ "cues": [
+  {
+   "beat": 0.0,
+   "name": "role",
+   "sfx": "click"
+  },
+  {
+   "beat": 3.0,
+   "name": "kpi",
+   "sfx": "click"
+  },
+  {
+   "beat": 6.0,
+   "name": "packhouse",
+   "sfx": "click"
+  },
+  {
+   "beat": 9.0,
+   "name": "grade",
+   "sfx": "click"
+  },
+  {
+   "beat": 12.0,
+   "name": "coldroom",
+   "sfx": "click"
+  },
+  {
+   "beat": 15.0,
+   "name": "search",
+   "sfx": "key"
+  },
+  {
+   "beat": 15.25,
+   "name": "type-1",
+   "sfx": "type"
+  },
+  {
+   "beat": 15.5,
+   "name": "type-2",
+   "sfx": "type"
+  },
+  {
+   "beat": 15.75,
+   "name": "type-3",
+   "sfx": "type"
+  },
+  {
+   "beat": 16.0,
+   "name": "type-4",
+   "sfx": "type"
+  },
+  {
+   "beat": 16.25,
+   "name": "type-5",
+   "sfx": "type"
+  },
+  {
+   "beat": 16.5,
+   "name": "type-6",
+   "sfx": "type"
+  },
+  {
+   "beat": 16.75,
+   "name": "type-7",
+   "sfx": "type"
+  },
+  {
+   "beat": 18.0,
+   "name": "order",
+   "sfx": "key"
+  },
+  {
+   "beat": 21.0,
+   "name": "dispatch",
+   "sfx": "click"
+  }
+ ],
+ "container": {
+  "cx": 540,
+  "cy": 880
+ },
+ "ground": "#0b0f19"
+}

@@ -137,6 +137,81 @@ say(f'cue sync      {len(cues) - len(fails)}/{len(cues)} cues: first visible cha
     f'(median {np.median(lat):+.1f} ms, range {lat.min():+.0f}..{lat.max():+.0f} ms)' + ('  OK' if not fails else f'  FAIL: {", ".join(fails)}'))
 say('              ' + '  '.join(rows))
 
+# morph films: each state's container, measured on its settled frame (2 frames before the next
+# action), against the table in timeline.json. Lossless PNG stills, sub-pixel edges from anti-aliasing,
+# radius from the uncovered area of each corner square, r² (1 − π/4).
+if 'states' in T:
+    from PIL import Image
+    S = T['states']
+    hexrgb = lambda h: np.array([int(h[i:i + 2], 16) for i in (1, 3, 5)], float)
+    g = hexrgb(T['ground'])
+    cx0, cy0 = T['container']['cx'], T['container']['cy']
+    settle = [(S[j + 1]['t'] if j + 1 < len(S) else DUR) - 2 / FPS for j in range(len(S))]
+    sdir = CHK / 'states'
+    run(['node', 'render.mjs', str(film), '--frames', str(sdir), '--stills', ','.join(f'{x:.4f}' for x in settle)])
+
+    def runext(prof, c):
+        if prof[c] < 0.5:
+            return None
+        a = c
+        while a > 0 and prof[a - 1] >= 0.5: a -= 1
+        b = c
+        while b < len(prof) - 1 and prof[b + 1] >= 0.5: b += 1
+        return a - (prof[a - 1] if a > 0 else 0), b + 1 + (prof[b + 1] if b < len(prof) - 1 else 0)
+
+    bad = []
+    for s, ts in zip(S, settle):
+        f = hexrgb(s['fill']); d = f - g
+        img = np.asarray(Image.open(sdir / f't_{round(ts * FPS) / FPS:.3f}.png').convert('RGB')).astype(float)
+        rel = img - g
+        k = (rel @ d) / (d @ d)
+        off = np.linalg.norm(rel - k[..., None] * d, axis=2)
+        cov = np.where(off < 6, np.clip(k, 0, 1), 1.0)   # colours off the ground→fill line are content: inside
+        # widest row / tallest column through the centre (on a pill every other row is shorter);
+        # the cursor can only shorten a run, so the max is the clean one
+        xs = [e for e in (runext(cov[y], cx0) for y in range(cy0 - 3, cy0 + 4)) if e]
+        ys = [e for e in (runext(cov[:, x], cy0) for x in range(cx0 - 3, cx0 + 4)) if e]
+        left, right = min(e[0] for e in xs), max(e[1] for e in xs)
+        top, bottom = min(e[0] for e in ys), max(e[1] for e in ys)
+        w, h = right - left, bottom - top
+        R0 = int(min(w, h) // 2)
+        L, Tp, R, Bm = (int(round(v)) for v in (left, top, right, bottom))
+        quads = [cov[Tp:Tp + R0, L:L + R0], cov[Tp:Tp + R0, R - R0:R], cov[Bm - R0:Bm, L:L + R0], cov[Bm - R0:Bm, R - R0:R]]
+        # the cursor's outline can only add uncovered pixels, so trust the two cleanest corners
+        rs = sorted(float(np.sqrt((1 - q).sum() / (1 - np.pi / 4))) for q in quads)
+        r = (rs[0] + rs[1]) / 2
+        ok = abs(w - s['w']) <= 2 and abs(h - s['h']) <= 2 and abs(r - s['r']) <= 2
+        if not ok: bad.append(s['name'])
+        say(f"state {s['name']:<10s} t={s['t']:>4.1f}  table {s['w']}×{s['h']} r{s['r']:<4}  measured {w:.1f}×{h:.1f} r{r:.1f}" + ('  OK' if ok else '  OFF'))
+    if T.get('loop'):
+        say(f"state {'(loop)':<10s} t={DUR:>4.1f}  row repeats t=0; container at t={DUR} is frame 0 of the next pass")
+    say(f'states        {len(S) - len(bad)}/{len(S)} within ±2 px of the table' + ('  OK' if not bad else f'  OFF: {", ".join(bad)}'))
+    # settled text is fully visible: each state 1.0 s after its action, rendered with and without the
+    # text masks (window.filmDebug.noMasks) — the frames must be pixel-identical. A second render also
+    # lifts the container clip (noClip): anti-aliasing under a clip shifts edges by a few levels, so only
+    # differences > 8 levels count there — a clipped glyph differs by far more than that.
+    tt = [s['t'] + 1.0 for s in S]
+    stl = ','.join(f'{x:.4f}' for x in tt)
+    variants = {'masks_on': None, 'masks_off': '{"noMasks":true}', 'clip_off': '{"noMasks":true,"noClip":true}'}
+    for d, dbg in variants.items():
+        run(['node', 'render.mjs', str(film), '--frames', str(CHK / d), '--stills', stl] + (['--debug', dbg] if dbg else []))
+    load = lambda d, fn: np.asarray(Image.open(CHK / d / fn).convert('RGB')).astype(int)
+    for other, tol, label in (('masks_off', 0, 'text masks off'), ('clip_off', 8, 'container clip off too')):
+        clipped = []
+        for s, x in zip(S, tt):
+            fn = f't_{round(x * FPS) / FPS:.3f}.png'
+            diff = np.abs(load('masks_on', fn) - load(other, fn)).max(axis=2)
+            n = int((diff > tol).sum())
+            if n:
+                ys, xs = np.nonzero(diff > tol)
+                clipped.append(f"{s['name']} ({n} px, x {xs.min()}–{xs.max()}, y {ys.min()}–{ys.max()}, max {diff.max()} levels)")
+        say(f'text visible  {len(S) - len(clipped)}/{len(S)} states identical at state + 1.0 s with {label}'
+            + (f' (tolerance {tol} levels)' if tol else ' (exact)') + ('  OK' if not clipped else f'  FAIL: {"; ".join(clipped)}'))
+    probe = boxes.get('_probe')
+    if probe:
+        say(f"loop state    max |value(t={DUR}) − value(0)| {probe['loopValue']:.2e}, max |velocity(t={DUR}) − velocity(0)| {probe['loopVelocity']:.2e} (all tracks)"
+            + ('  OK' if probe['loopValue'] < 1e-3 and probe['loopVelocity'] < 1e-2 else '  OFF'))
+
 # audio: onsets in the final mix vs the 16th grid, and every SFX cue against the visual cue it belongs to
 import librosa
 run(['ffmpeg', '-v', 'error', '-y', '-i', str(final), '-vn', '-ac', '1', '-ar', '48000', str(CHK / 'audio.wav')])

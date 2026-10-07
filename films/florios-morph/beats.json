@@ -1,0 +1,134 @@
+{
+ "bpm": 120,
+ "duration": 12,
+ "sample_rate": 48000,
+ "loop": true,
+ "beats": [
+  0.0,
+  0.5,
+  1.0,
+  1.5,
+  2.0,
+  2.5,
+  3.0,
+  3.5,
+  4.0,
+  4.5,
+  5.0,
+  5.5,
+  6.0,
+  6.5,
+  7.0,
+  7.5,
+  8.0,
+  8.5,
+  9.0,
+  9.5,
+  10.0,
+  10.5,
+  11.0,
+  11.5
+ ],
+ "downbeats": [
+  0.0,
+  1.5,
+  3.0,
+  4.5,
+  6.0,
+  7.5,
+  9.0,
+  10.5
+ ],
+ "kick": [
+  0.0,
+  1.5,
+  3.0,
+  4.5,
+  6.0,
+  7.5,
+  9.0,
+  10.5
+ ],
+ "snare": [],
+ "sfx": [
+  {
+   "t": 0.0,
+   "name": "role",
+   "sfx": "click"
+  },
+  {
+   "t": 1.5,
+   "name": "kpi",
+   "sfx": "click"
+  },
+  {
+   "t": 3.0,
+   "name": "packhouse",
+   "sfx": "click"
+  },
+  {
+   "t": 4.5,
+   "name": "grade",
+   "sfx": "click"
+  },
+  {
+   "t": 6.0,
+   "name": "coldroom",
+   "sfx": "click"
+  },
+  {
+   "t": 7.5,
+   "name": "search",
+   "sfx": "key"
+  },
+  {
+   "t": 7.625,
+   "name": "type-1",
+   "sfx": "type"
+  },
+  {
+   "t": 7.75,
+   "name": "type-2",
+   "sfx": "type"
+  },
+  {
+   "t": 7.875,
+   "name": "type-3",
+   "sfx": "type"
+  },
+  {
+   "t": 8.0,
+   "name": "type-4",
+   "sfx": "type"
+  },
+  {
+   "t": 8.125,
+   "name": "type-5",
+   "sfx": "type"
+  },
+  {
+   "t": 8.25,
+   "name": "type-6",
+   "sfx": "type"
+  },
+  {
+   "t": 8.375,
+   "name": "type-7",
+   "sfx": "type"
+  },
+  {
+   "t": 9.0,
+   "name": "order",
+   "sfx": "key"
+  },
+  {
+   "t": 10.5,
+   "name": "dispatch",
+   "sfx": "click"
+  }
+ ],
+ "loudness": {
+  "integrated_lufs": -14.0,
+  "true_peak_dbtp": -1.6
+ }
+}

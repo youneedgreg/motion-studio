@@ -1,0 +1,289 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>florios-morph</title>
+<style>
+  @font-face { font-family: 'Geist'; src: url('../../assets/fonts/geist/Geist-Variable.woff2') format('woff2'); font-weight: 100 900; }
+  html, body { margin: 0; background: #0b0f19; overflow: hidden; }
+  canvas { display: block; }
+</style>
+</head>
+<body>
+<canvas id="c" width="1080" height="1920"></canvas>
+<script type="module">
+// FLORIOS-MORPH — 12 s loop, 1080×1920 @ 60 fps. One container never cuts: every state is the same
+// rounded rectangle changing width, height, radius and fill (OKLab), each change triggered by a cursor
+// click or a keystroke. Content swaps inside it. The state table lives in timeline.json.
+import T from './timeline.json' with { type: 'json' };
+import { clamp, prog, ease, spring, springTrack } from '../../lib/motion.js';
+import { hexToOklab, oklabToCss } from '../../lib/color.js';
+
+const W = T.width, H = T.height, D = T.duration;
+const B = 60 / T.bpm;
+const CUE = Object.fromEntries(T.cues.map((c) => [c.name, c.beat * B]));
+const S = T.states;
+// Flori-Core brand tokens (apps/web/app/globals.css): brand-dark ground, brand-green the one accent.
+const GROUND = T.ground, ACCENT = '#10b981', ON_ACCENT = '#04221a';
+const INK = '#f8fafc', SUB = '#94a3b8', DIM = '#64748b';
+const CX = T.container.cx, CY = T.container.cy;  // the container never moves, it only changes shape
+const SPRING = { freq: 2.2, damp: 0.8, period: D };   // ≤ 1.6 % overshoot
+const ctx = document.getElementById('c').getContext('2d');
+const noMasks = () => !!window.filmDebug?.noMasks;   // debug: text masks off
+const noClip = () => !!window.filmDebug?.noClip;     // debug: container clip off
+
+// ---------- tracks: one sum-of-springs track per property ----------
+const track = (key) => springTrack(S.map((s) => ({ t: s.t, v: s[key] })), SPRING);
+const tw = track('w'), th = track('h'), tr = track('r');
+const LAB = S.map((s) => hexToOklab(s.fill));
+const tL = [0, 1, 2].map((c) => springTrack(S.map((s, i) => ({ t: s.t, v: LAB[i][c] })), SPRING));
+const box = (t) => ({ w: tw(t), h: th(t), r: tr(t) });
+
+// ---------- state index helpers ----------
+const stateAt = (t) => { let j = 0; for (let i = 0; i < S.length; i++) if (t >= S[i].t) j = i; return j; };
+const nextT = (j) => (j + 1 < S.length ? S[j + 1].t : D);
+
+// ---------- drawing helpers ----------
+function font(size, weight) { ctx.font = `${weight} ${size}px Geist`; }
+// Per frame: when the current state's content starts entering, and a counter that delays each
+// successive line/block by 50 ms (a time delay, so every line still settles fully).
+const FR = { t: 0, start: 0, k: 0 };
+const pInFor = (k) => clamp(spring(FR.t - FR.start - 0.05 * k, 3.2, 0.82), 0, 1.2);
+// A line of text rising out of (and later lifting off into) its own mask. The mask spans the font's
+// full ascent and descent plus 4 px, so settled text is never clipped. window.filmDebug.noMasks turns
+// masks off; tools/check.py renders both ways and requires identical settled frames.
+function line(text, x, y, size, weight, color, pOut, { align = 'left', track = 0, pIn } = {}) {
+  pIn = pIn ?? pInFor(FR.k++);
+  if (pIn <= 0 || pOut >= 1) return;
+  font(size, weight);
+  ctx.letterSpacing = `${track}px`;
+  ctx.textAlign = align;
+  const m = ctx.measureText(text);
+  const asc = m.fontBoundingBoxAscent, desc = m.fontBoundingBoxDescent;
+  const x0 = align === 'center' ? x - m.width / 2 : align === 'right' ? x - m.width : x;
+  const travel = asc + desc + 8;   // far enough that the glyphs start fully below the mask
+  ctx.save();
+  if (!noMasks()) {
+    ctx.beginPath();
+    ctx.rect(x0 - 12, y - asc - 4, m.width + 24, asc + desc + 8);
+    ctx.clip();
+  }
+  ctx.fillStyle = color;
+  ctx.fillText(text, x, y + (1 - pIn) * travel - ease.inCubic(pOut) * travel);
+  ctx.restore();
+  ctx.letterSpacing = '0px';
+}
+// Blocks (chips, buttons, markers) scale in on the same stagger instead of rising.
+function block(pOut, cx, cy, draw) {
+  const pIn = pInFor(FR.k++);
+  if (pIn <= 0 || pOut >= 1) return;
+  const s = pIn * (1 - ease.inCubic(pOut));
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.scale(s, s);
+  draw();
+  ctx.restore();
+}
+const rr = (x, y, w, h, r, fill) => { ctx.beginPath(); ctx.roundRect(x, y, w, h, Math.min(r, w / 2, h / 2)); ctx.fillStyle = fill; ctx.fill(); };
+
+// ---------- content per state, laid out on the state's own settled size ----------
+const CONTENT = {
+  role(o) {
+    block(o, CX - 384, CY, () => { ctx.beginPath(); ctx.arc(0, 0, 15, 0, Math.PI * 2); ctx.fillStyle = ACCENT; ctx.fill(); });
+    line('Managing Director', CX - 344, CY - 6, 64, 650, INK, o, { track: -1.2 });
+    line('Waridi Flowers Ltd', CX - 344, CY + 54, 40, 500, SUB, o);
+    line('→', CX + 392, CY + 20, 56, 500, SUB, o, { align: 'right' });
+  },
+  kpi(o) {
+    line('PRODUCTION OUTPUT', CX - 376, CY - 196, 30, 650, ACCENT, o, { track: 4 });
+    line('125,000', CX - 386, CY + 34, 210, 700, INK, o, { track: -8 });
+    line('stems / day projected', CX - 376, CY + 116, 42, 500, SUB, o);
+    line('Waridi Flowers · Naivasha', CX - 376, CY + 236, 30, 500, DIM, o);
+    line('Pack house →', CX + 376, CY + 236, 30, 600, SUB, o, { align: 'right' });
+  },
+  packhouse(o) {
+    line('32 batches awaiting', CX - 420, CY - 44, 54, 700, ON_ACCENT, o, { track: -1 });
+    line('QC grading', CX - 420, CY + 14, 54, 700, ON_ACCENT, o, { track: -1 });
+    block(o, CX + 266, CY, () => {
+      rr(-150, -42, 300, 84, 42, ON_ACCENT);
+      font(34, 650); ctx.textAlign = 'center'; ctx.fillStyle = ACCENT; ctx.fillText('Grade now →', 0, 12);
+    });
+  },
+  // inside the circle: every line sits where the circle is wider than the line, with clear gaps
+  grade(o) {
+    line('BATCH-00183', CX, CY - 176, 30, 650, DIM, o, { align: 'center', track: 2 });
+    line('A', CX, CY + 54, 250, 800, GROUND, o, { align: 'center' });
+    line('Rhodos · 3,605 stems', CX, CY + 124, 34, 600, '#334155', o, { align: 'center' });
+    line('Cold room handover →', CX, CY + 184, 30, 650, '#059669', o, { align: 'center' });
+  },
+  coldroom(o) {
+    line('COLD ROOM 1', CX, CY - 384, 32, 650, SUB, o, { align: 'center', track: 3 });
+    line('2.4°C', CX, CY - 186, 120, 700, INK, o, { align: 'center', track: -4 });
+    block(o, CX, CY - 104, () => {
+      rr(-82, -28, 164, 56, 28, ACCENT);
+      font(26, 700); ctx.textAlign = 'center'; ctx.fillStyle = ON_ACCENT; ctx.fillText('STABLE', 0, 9);
+    });
+    // 0-10 °C scale with the 2-8 °C band and the reading
+    block(o, CX, CY + 170, () => {
+      rr(-9, -210, 18, 420, 9, '#334155');
+      ctx.strokeStyle = SUB; ctx.lineWidth = 3;
+      for (const v of [2, 8]) { const y = 210 - v * 42; ctx.beginPath(); ctx.moveTo(-26, y); ctx.lineTo(26, y); ctx.stroke(); }
+      ctx.beginPath(); ctx.arc(0, 210 - 2.4 * 42, 18, 0, Math.PI * 2); ctx.fillStyle = ACCENT; ctx.fill();
+    });
+    line('target 2–8 °C', CX, CY + 444, 32, 500, SUB, o, { align: 'center' });
+  },
+  search(o, t) {
+    block(o, CX - 390, CY, () => {
+      ctx.strokeStyle = DIM; ctx.lineWidth = 6; ctx.lineCap = 'round';
+      ctx.beginPath(); ctx.arc(-6, -6, 20, 0, Math.PI * 2); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(9, 9); ctx.lineTo(24, 24); ctx.stroke();
+    });
+    const typed = 'ORD-899'.slice(0, [1, 2, 3, 4, 5, 6, 7].filter((k) => t >= CUE[`type-${k}`]).length);
+    if (!typed) line('Search orders, batches…', CX - 340, CY + 16, 42, 500, SUB, o);
+    else line(typed, CX - 340, CY + 19, 56, 650, GROUND, o, { track: 1, pIn: 1 });
+    if (typed && o <= 0 && Math.floor(t / (B / 2)) % 2 === 0) {
+      font(56, 650); ctx.letterSpacing = '1px';
+      rr(CX - 336 + ctx.measureText(typed).width, CY - 30, 5, 62, 2, GROUND);
+      ctx.letterSpacing = '0px';
+    }
+  },
+  order(o) {
+    line('NEW ORDER', CX - 376, CY - 262, 28, 700, ACCENT, o, { track: 4 });
+    line('#ORD-899', CX - 380, CY - 128, 128, 700, INK, o, { track: -4 });
+    line('FloraHolland', CX - 376, CY - 18, 66, 650, INK, o, { track: -1 });
+    line('received 15 min ago', CX - 376, CY + 46, 38, 500, SUB, o);
+    block(o, CX + 256, CY + 252, () => {
+      rr(-120, -44, 240, 88, 44, ACCENT);
+      font(36, 700); ctx.textAlign = 'center'; ctx.fillStyle = ON_ACCENT; ctx.fillText('Route →', 0, 12);
+    });
+  },
+  dispatch(o) {
+    line('Ready to route · 3 orders', CX - 404, CY - 8, 50, 700, ON_ACCENT, o, { track: -1 });
+    line('EUR 1,371.70 · KDG 466X refrigerated', CX - 402, CY + 46, 31, 600, ON_ACCENT, o);
+    block(o, CX + 382, CY, () => {
+      ctx.beginPath(); ctx.arc(0, 0, 56, 0, Math.PI * 2); ctx.fillStyle = ON_ACCENT; ctx.fill();
+      font(34, 700); ctx.textAlign = 'center'; ctx.fillStyle = ACCENT; ctx.fillText('GW', 0, 12);
+    });
+  },
+};
+// Where the cursor clicks to trigger each state (null for keystroke-triggered states: the cursor rests).
+const CLICK_AT = {
+  role: [CX + 382, CY + 4], kpi: [CX + 150, CY + 10], packhouse: [CX + 240, CY + 210], grade: [CX + 290, CY + 10],
+  coldroom: [CX + 60, CY + 172], search: null, order: null, dispatch: [CX + 280, CY + 262],
+};
+const REST = [CX + 300, CY + 560];
+
+// cursor track: after each state's content is in, glide to the next click point (or rest)
+const CUR = S.map((s, j) => {
+  const nxt = S[(j + 1) % S.length];
+  const p = CLICK_AT[nxt.name] || REST;
+  return { t: s.t + 0.3, x: p[0], y: p[1] };
+});
+const cx = springTrack(CUR.map((k) => ({ t: k.t, v: k.x })), { freq: 1.7, damp: 0.85, period: D });
+const cy = springTrack(CUR.map((k) => ({ t: k.t, v: k.y })), { freq: 1.7, damp: 0.85, period: D });
+const CLICKS = S.filter((s) => CLICK_AT[s.name]).map((s) => s.t).concat([D]);
+
+function drawCursor(t) {
+  let press = 0, ring = -1;
+  for (const c of CLICKS) {
+    if (t < c) continue;   // pressed fully on the click frame, released on a spring
+    press = Math.max(press, t - c < 0.05 ? 1 : 1 - spring(t - c - 0.05, 5, 0.8));
+    if (t < c + 0.32) ring = (t - c) / 0.32;
+  }
+  const x = cx(t), y = cy(t);
+  if (ring >= 0) { // a thin ring that widens and thins out (no glow)
+    ctx.beginPath(); ctx.arc(x, y, 12 + 40 * ease.outCubic(ring), 0, Math.PI * 2);
+    ctx.strokeStyle = INK; ctx.lineWidth = 4 * (1 - ring); ctx.stroke();
+  }
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.scale(1 - 0.14 * Math.max(0, press), 1 - 0.14 * Math.max(0, press));
+  ctx.beginPath();
+  ctx.moveTo(0, 0); ctx.lineTo(0, 54); ctx.lineTo(13, 42); ctx.lineTo(22, 62); ctx.lineTo(31, 58); ctx.lineTo(22, 38); ctx.lineTo(39, 38); ctx.closePath();
+  ctx.fillStyle = INK; ctx.fill();
+  ctx.strokeStyle = GROUND; ctx.lineWidth = 3; ctx.lineJoin = 'round'; ctx.stroke();
+  ctx.restore();
+}
+
+// keycap for the keystroke-driven states
+const KEYS = [['⌘K', CUE.search], ...'ORD-899'.split('').map((ch, k) => [ch, CUE[`type-${k + 1}`]]), ['↵', CUE.order]];
+function drawKeycap(t) {
+  if (t < CUE.search) return;
+  const up = 0.5 + 0.5 * spring(t - CUE.search, 3.4, 0.82), down = ease.inCubic(prog(t, CUE.order + 0.25, CUE.order + 0.45));
+  if (down >= 1) return;
+  let key = KEYS[0], since = t - KEYS[0][1];
+  for (const k of KEYS) if (t >= k[1]) { key = k; since = t - k[1]; }
+  const press = since < 0.05 ? 1 : 1 - spring(since - 0.05, 6, 0.8);
+  const y = 1640 + down * 340;
+  ctx.save(); ctx.translate(CX, 1640); ctx.scale(up, up); ctx.translate(-CX, -1640);
+  const depth = 10 * (1 - press);
+  rr(CX - 100, y - 70 + 10, 200, 140, 26, '#05080f');           // key side
+  rr(CX - 100, y - 70 + (10 - depth), 200, 140, 26, '#1e293b');  // key top
+  const ty = y + (10 - depth);
+  ctx.fillStyle = INK; ctx.textAlign = 'center';
+  if (key[0] === '⌘K') { // Geist has no ⌘ glyph: draw it
+    ctx.save(); ctx.translate(CX - 34, ty); ctx.strokeStyle = INK; ctx.lineWidth = 4;
+    for (const [sx, sy] of [[-1, -1], [1, -1], [1, 1], [-1, 1]]) { ctx.beginPath(); ctx.arc(sx * 13, sy * 13, 8, 0, Math.PI * 2); ctx.stroke(); }
+    ctx.strokeRect(-13, -13, 26, 26); ctx.restore();
+    font(56, 650); ctx.fillText('K', CX + 30, ty + 20);
+  } else { font(64, 650); ctx.fillText(key[0], CX, ty + 22); }
+  ctx.restore();
+}
+
+// ---------- seek ----------
+function render(t) {
+  ctx.fillStyle = GROUND;
+  ctx.fillRect(0, 0, W, H);
+  const b = box(t);
+  const r = Math.min(b.r, b.w / 2, b.h / 2);
+  ctx.beginPath();
+  ctx.roundRect(CX - b.w / 2, CY - b.h / 2, b.w, b.h, r);
+  ctx.fillStyle = oklabToCss(tL.map((f) => f(t)));
+  ctx.fill();
+  // content of the current state: in after the morph starts, out before the next one starts
+  const j = stateAt(t), s = S[j], tn = nextT(j);
+  Object.assign(FR, { t, start: s.t + 0.15, k: 0 });
+  const pOut = prog(t, tn - 0.24, tn - 0.06);
+  ctx.save();
+  if (!noClip()) { ctx.beginPath(); ctx.roundRect(CX - b.w / 2, CY - b.h / 2, b.w, b.h, r); ctx.clip(); }
+  CONTENT[s.name](pOut, t);
+  ctx.restore();
+  drawKeycap(t);
+  drawCursor(t);
+}
+window.seek = function seek(time) {
+  window.__t = time;
+  render(((time % D) + D) % D);
+};
+
+// For tools/check.py: where each cue's action happens, and every track's value/velocity at the loop seam.
+window.cueBox = (name) => {
+  // keystrokes happen on the keycap; clicks happen under the cursor (the container answers on the same frame)
+  if (name.startsWith('type-') || !CLICK_AT[name]) return [CX - 110, 1560, 220, 170];
+  const [x, y] = CLICK_AT[name];
+  return [x - 70, y - 70, 140, 140];
+};
+window.filmProbe = () => {
+  const props = [tw, th, tr, ...tL, cx, cy];
+  const h = 1e-3;
+  const dv = (f, t) => (f(t + h) - f(t)) / h;
+  return {
+    loopValue: Math.max(...props.map((f) => Math.abs(f(D) - f(0)))),
+    loopVelocity: Math.max(...props.map((f) => Math.abs(dv(f, D) - dv(f, 0)))),
+  };
+};
+
+await document.fonts.load('700 100px Geist');
+await document.fonts.load('500 40px Geist');
+await document.fonts.ready;
+window.seek(0);
+window.filmReady = true;
+
+if (!navigator.webdriver) { // preview-only
+  const start = performance.now(); // preview-only
+  const tick = (now) => { window.seek(((now - start) / 1000) % D); requestAnimationFrame(tick); }; // preview-only
+  requestAnimationFrame(tick); // preview-only
+} // preview-only
+</script>
+</body>
+</html>
