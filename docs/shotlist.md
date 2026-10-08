@@ -7,7 +7,7 @@ None of the reference's content, logo, mascot, characters or copy is used.
 
 **Sources:**
 - **Live demo:** `https://safarios-demo.vercel.app`, the public pages and the five "Product tour" mocks, explored and captured on 2026-10-07. This is the current brand, and it supersedes the older `safari-os-website` repo (green `#15803d`, IBM Plex).
-- **Product code:** `/Volumes/Gwan/projects/safari-os` (`src/`, `prisma/schema.prisma`, `prisma/seed-demo.ts`, which is fictional data).
+- **Product code:** the Safari OS repo (`src/`, `prisma/schema.prisma`, `prisma/seed-demo.ts`, which is fictional data).
 - **Real records:** never read for content. `prisma/seed.ts` and `seed-tour-data.ts` are an export of real operational records, so they're off limits.
 - **The name "SAWAS"** appears nowhere in the video. That rules out the old screenshots (sidebar says "SAWAS") and the demo invoice number prefix ("SAW-…").
 
