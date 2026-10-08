@@ -12,4 +12,6 @@ films/*/score.wav
 # reference footage and its extracted frames stay local
 refs/*.mp4
 refs/frames/
+refs/*/frames/
+refs/*/contact.png
 .DS_Store

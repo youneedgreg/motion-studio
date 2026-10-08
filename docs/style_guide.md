@@ -1,8 +1,8 @@
 # Style guide — from `refs/launch.mp4`
 
 The grammar of the reference, written so it can be reused for other content. Source: 1920×1080, 60 fps, 15.125 s.
-Evidence: `refs/frames/` (frame `f_N` = (N − 1) × 0.5 + 0.233 s), full-resolution crops of the type,
-direct seeks around every transition, per-frame pixel change, `refs/beats.md`, `docs/palette.json`.
+Evidence: `refs/launch/frames/` (frame `f_N` = (N − 1) × 0.5 s), full-resolution crops of the type,
+direct seeks around every transition, per-frame pixel change, `refs/launch/beats.md`, `docs/palette.json`.
 
 **Marked `GUESS`:** anything read by eye rather than measured. Hex values are sampled from frames unless marked.
 
@@ -63,7 +63,7 @@ The wordmark is a custom rounded geometric face, the brand's own logo. It isn't 
 
 ## 3. Pacing
 
-From `refs/beats.md`:
+From `refs/launch/beats.md`:
 
 | Beats | Length | Notes |
 |---|---|---|
