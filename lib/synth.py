@@ -3,7 +3,8 @@
 A score builds into a Mixer (dry bus + reverb send), then master() glues, limits to a
 true-peak ceiling and normalises to a loudness target measured with ffmpeg's ebur128.
 """
-import re, subprocess
+import re, subprocess, zlib
+from pathlib import Path
 import numpy as np
 import soundfile as sf
 from scipy import signal
@@ -22,8 +23,16 @@ def env(d, a=0.002, decay=0.2):
     return np.minimum(1, t / a) * np.exp(-t / decay)
 
 
-def noise(d):
-    return _rng.standard_normal(int(d * SR))
+def seed_for(*parts):
+    """A stable 32-bit seed from a sound's identity, e.g. seed_for('florios', 'click', 'kpi')."""
+    return zlib.crc32('/'.join(map(str, parts)).encode())
+
+
+def noise(d, seed=None):
+    """White noise. With `seed` the sound gets its own stream, so adding or removing another sound
+    never changes it; without one it draws from the shared module stream (order-dependent)."""
+    rng = _rng if seed is None else np.random.default_rng(seed)
+    return rng.standard_normal(int(d * SR))
 
 
 def sweep_sine(d, f0, f1, curve=0.04):
@@ -59,12 +68,12 @@ def mtof(m):
     return 440 * 2 ** ((m - 69) / 12)
 
 
-def marimba(m, d=0.6, bright=1.0):
+def marimba(m, d=0.6, bright=1.0, seed=None):
     """Struck bar: fundamental + 4th partial, fast decay; woody click on the attack."""
     f = mtof(m)
     t = tt(d)
     x = np.sin(2 * np.pi * f * t) * np.exp(-t / 0.28) + 0.35 * bright * np.sin(2 * np.pi * 3.93 * f * t) * np.exp(-t / 0.05)
-    x[:240] += hp(noise(240 / SR), 2500) * 0.15 * bright
+    x[:240] += hp(noise(240 / SR, seed), 2500) * 0.15 * bright
     return x * np.minimum(1, t / 0.0015)
 
 
@@ -75,9 +84,9 @@ def bell(m, d=1.6):
             + 0.25 * np.sin(2 * np.pi * 5.4 * f * t) * np.exp(-t / 0.12)) * np.exp(-t / 0.6) * np.minimum(1, t / 0.002)
 
 
-def whoosh(d, lo=300, hi=6000, up=True):
+def whoosh(d, lo=300, hi=6000, up=True, seed=None):
     """Filtered noise whose band sweeps; amplitude swells to the middle."""
-    x = noise(d)
+    x = noise(d, seed)
     out = np.zeros_like(x)
     seg = int(0.01 * SR)
     for i in range(0, len(x), seg):
@@ -108,9 +117,9 @@ class Mixer:
             self.wet[i:i + n, 0] += x[:n] * L * send
             self.wet[i:i + n, 1] += x[:n] * R * send
 
-    def render(self, rev_time=0.35, rev_gain=0.06):
+    def render(self, rev_time=0.35, rev_gain=0.06, seed=None):
         ir_t = tt(1.6)
-        ir = np.stack([lp(noise(1.6), 6000) * np.exp(-ir_t / rev_time) for _ in range(2)], 1)
+        ir = np.stack([lp(noise(1.6, None if seed is None else seed + c), 6000) * np.exp(-ir_t / rev_time) for c in range(2)], 1)
         ir[:int(0.012 * SR)] = 0
         rev = np.stack([signal.fftconvolve(self.wet[:, c], ir[:, c])[:len(self.wet)] for c in range(2)], 1) * rev_gain
         mix = self.dry + rev
@@ -154,20 +163,30 @@ def measure(path):
     return I, tp
 
 
-def master(mix, path, target=-14.0, fade_out=0.0):
-    """Glue, limit and normalise to `target` LUFS (true peak ≤ -1 dBTP). Returns (LUFS, dBTP)."""
+def master(mix, path, target=-14.0, fade_out=0.0, tol=0.15, ceiling=-1.0):
+    """Glue, limit and normalise to `target` LUFS with true peak <= `ceiling` dBTP. Returns (LUFS, dBTP).
+    Raises RuntimeError, writing nothing to `path`, if the gain loop doesn't converge within ±tol LU."""
+    path = Path(path)
     src = np.tanh(mix * 1.2) / 1.2
     if fade_out:
         n = int(fade_out * SR)
         src[-n:] *= np.linspace(1, 0, n)[:, None] ** 2
-    gain_db = 0.0
-    for it in range(6):
-        y = limit(src * 10 ** (gain_db / 20))
-        sf.write(path, y.astype(np.float32), SR, subtype='FLOAT')
-        I, tp = measure(path)
-        print(f'pass {it}: gain {gain_db:+.2f} dB → {I:.2f} LUFS, true peak {tp:.2f} dBTP')
-        if abs(I - target) < 0.15 and tp <= -1.0:
-            break
-        gain_db += target - I
+    tmp = path.with_name(path.stem + '.mastering.wav')   # measured here; `path` only gets a passing master
+    gain_db, ok = 0.0, False
+    try:
+        for it in range(6):
+            y = limit(src * 10 ** (gain_db / 20))
+            sf.write(tmp, y.astype(np.float32), SR, subtype='FLOAT')
+            I, tp = measure(tmp)
+            print(f'pass {it}: gain {gain_db:+.2f} dB → {I:.2f} LUFS, true peak {tp:.2f} dBTP')
+            if abs(I - target) < tol and tp <= ceiling:
+                ok = True
+                break
+            gain_db += target - I
+    finally:
+        tmp.unlink(missing_ok=True)
+    if not ok:
+        raise RuntimeError(f'mastering did not converge: {I:.2f} LUFS (target {target} ± {tol}), '
+                           f'true peak {tp:.2f} dBTP (ceiling {ceiling}) after 6 passes; {path.name} not written')
     sf.write(path, y, SR, subtype='PCM_24')
     return I, tp

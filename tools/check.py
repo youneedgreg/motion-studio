@@ -222,7 +222,32 @@ say(f'audio onsets  {len(on)} detected: median |offset| from 16th grid {np.media
     f'{(np.abs(aoff) <= 20).mean() * 100:.0f}% within 20 ms')
 sfx = {s['name']: s['t'] for s in BEATS['sfx']}
 dv = [abs(sfx[nm] - t) * 1000 for nm, t in cues]
-say(f'sfx ↔ cues    {len(dv)} cues, max |sfx − visual cue| {max(dv):.2f} ms')
+# This only confirms score.py placed each SFX at its cue's timeline time; the measured audio/visual sync is "cue sync".
+say(f'sfx placement (internal consistency)  {len(dv)} cues, max |sfx time − cue time| {max(dv):.2f} ms')
+
+# audio health, measured on the delivered file (the mp4's AAC track, decoded)
+def ff_stderr(af):
+    return subprocess.run(['ffmpeg', '-nostats', '-i', str(final), '-map', '0:a', '-af', af, '-f', 'null', '-'],
+                          capture_output=True, text=True, cwd=ROOT).stderr
+run(['ffmpeg', '-v', 'error', '-y', '-i', str(final), '-lavfi', 'showspectrumpic=s=1600x600:fscale=log:legend=1',
+     '-frames:v', '1', str(OUT / f'{name}-spectrum.png')])
+run(['ffmpeg', '-v', 'error', '-y', '-i', str(final), '-lavfi', 'showwavespic=s=1600x400:split_channels=1:colors=0x10b981|0x10b981',
+     '-frames:v', '1', str(OUT / f'{name}-wave.png')])
+say(f'audio images  out/{name}-spectrum.png (log frequency), out/{name}-wave.png')
+pcm = np.frombuffer(subprocess.run(['ffmpeg', '-v', 'error', '-i', str(final), '-map', '0:a', '-f', 'f32le', '-acodec', 'pcm_f32le', '-'],
+                                   capture_output=True, cwd=ROOT).stdout, np.float32)
+clipped = int((np.abs(pcm) >= 1.0).sum())   # astats has no clip counter; this is what clips on any fixed-point delivery
+st = ff_stderr('astats=measure_overall=none')
+dc = [float(v) for v in re.findall(r'DC offset: (-?[\d.]+)', st)]
+crest = [float(v) for v in re.findall(r'Crest factor: ([\d.]+)', st)]
+flat = [float(v) for v in re.findall(r'Flat factor: ([\d.]+)', st)]
+say(f'clipping      {clipped} samples at or beyond full scale (|x| >= 1.0); astats flat factor {max(flat):.2f}'
+    + ('  OK' if clipped == 0 else '  FAIL'))
+say(f'astats        DC offset {" / ".join(f"{v:+.6f}" for v in dc)} (L / R), crest factor '
+    + ' / '.join(f'{v:.2f} ({20 * np.log10(v):.1f} dB)' for v in crest))
+small = ff_stderr('highpass=f=150,highpass=f=150,ebur128')
+I_small = float(re.search(r'I:\s+(-?[\d.]+) LUFS', small[small.rfind('Summary:'):]).group(1))
+say(f'small speaker {I_small:.1f} LUFS after two 150 Hz high-pass stages vs {I:.1f} LUFS full range: {I - I_small:.1f} LU drop')
 (OUT / f'{name}-check.txt').write_text('\n'.join(report) + '\n')
 
 # exit non-zero when any check failed, so CI can gate on it
