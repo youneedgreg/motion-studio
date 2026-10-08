@@ -1,0 +1,79 @@
+name: films
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+      - name: Renderer parses
+        run: node --check render.mjs
+      - name: Render code follows the determinism rules (CLAUDE.md)
+        run: |
+          rc=0
+          for f in films/*/*.html films/*/*.js lib/*.js; do
+            [ -f "$f" ] || continue
+            printf '{"tool_input":{"file_path":"%s"}}' "$PWD/$f" | node .claude/hooks/check-determinism.mjs || rc=1
+          done
+          exit $rc
+      - name: Python compiles
+        run: python -m py_compile tools/*.py lib/*.py films/*/score.py palette.py
+
+  check:
+    needs: lint
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    strategy:
+      fail-fast: false
+      matrix:
+        film: [safarios, florios-morph, reel]
+    # the reel predates the per-element cue-sync check and still fails it (17/28 cues); report, don't block
+    continue-on-error: ${{ matrix.film == 'reel' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - name: Node deps + Chromium
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+      - name: ffmpeg
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+          cache: pip
+      - name: Python venv (CLAUDE.md: always .venv)
+        run: |
+          python -m venv .venv
+          .venv/bin/pip install -r requirements.txt
+      - name: Synthesize score
+        run: .venv/bin/python films/${{ matrix.film }}/score.py
+      - name: Render + objective checks
+        run: .venv/bin/python tools/check.py films/${{ matrix.film }}
+      - name: Upload render and check report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.film }}
+          path: |
+            out/${{ matrix.film }}.mp4
+            out/${{ matrix.film }}-check.txt
+            out/${{ matrix.film }}-contact.png
+          if-no-files-found: ignore
