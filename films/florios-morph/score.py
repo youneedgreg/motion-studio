@@ -31,8 +31,13 @@ ROOTS = [36, 33, 29, 31, 28, 33, 29, 31]
 
 
 def kick():
+    # voiced for phone speakers: the pitch sweep stops at 66 Hz instead of 46, the sub tail is shorter,
+    # and a 2nd-harmonic body plus a beater click carry the hit above 150 Hz where small speakers play
     d = 0.35
-    return np.tanh(1.4 * sweep_sine(d, 120, 46, 0.03) * env(d, 0.001, 0.16))
+    x = sweep_sine(d, 130, 66, 0.03) * env(d, 0.001, 0.09)
+    x += 0.5 * sweep_sine(d, 260, 132, 0.03) * env(d, 0.001, 0.063)
+    x[:480] += 0.6 * bp(noise(0.01, S('kick-click')), 1500, 6000) * env(0.01, 0.0003, 0.002)
+    return np.tanh(1.4 * x)
 
 
 def tick(f, seed):
@@ -43,12 +48,14 @@ KICK = kick()
 pad = np.zeros(len(mx.dry))
 for bar in range(8):
     t0 = bar * BAR
-    mx.add(t0, KICK, 0.55)
+    mx.add(t0, KICK, 0.42)
     log['kick'].append(t0)
     for s in range(6):  # 8th-note ticks, accent on beats
         mx.add(t0 + s * B / 2, tick(7000 if s % 2 else 4500, S('tick', bar, s)), 0.10 if s % 2 == 0 else 0.05, 0.3)
-    # bass on the downbeat, held for the bar
-    x = np.sin(2 * np.pi * mtof(ROOTS[bar]) * tt(BAR)) + 0.35 * np.sin(4 * np.pi * mtof(ROOTS[bar]) * tt(BAR))
+    # bass on the downbeat, held for the bar: the same roots, with 2nd-5th harmonic partials so phones
+    # (which play nothing much below ~150 Hz) still hear the line; mild saturation as before
+    f = mtof(ROOTS[bar])
+    x = sum(a * np.sin(2 * np.pi * (k + 1) * f * tt(BAR)) for k, a in enumerate((1, 0.6, 0.55, 0.35, 0.15)))
     mx.add(t0, np.tanh(1.2 * x) * env(BAR, 0.004, 0.9), 0.16)
     # soft pad
     i0 = int(t0 * SR)
@@ -64,7 +71,7 @@ for bar in range(8):
     for s in range(6):
         m = CHORDS[bar][[0, 2, 1, 3, 2, 4][s] % len(CHORDS[bar])] + 12
         mx.add(t0 + s * B / 2, marimba(m, 0.5, 0.5, seed=S('arp', bar, s)), 0.05, -0.3 + 0.12 * s, send=0.25)
-mx.add(0, pad, 0.02, send=0.35)
+mx.add(0, pad, 0.026, send=0.35)   # +2.3 dB: the pad carries the mid range on small speakers
 
 # SFX on the cues: a click (or a key) plus a soft swoop while the container morphs
 for c in T['cues']:
