@@ -88,6 +88,10 @@ function squircle(ctx, cx, cy, a, n, rot) {
   ctx.closePath();
 }
 const fill = (ctx, c) => { ctx.fillStyle = c; ctx.fillRect(0, 0, W, H); };
+// A cued hit: fully deflected on the cue frame itself (so it lands with its sound), then springs back to 0.
+const hit = (dt, freq = 4, damp = 0.5) => (dt < 0 ? 0 : 1 - spring(dt, freq, damp));
+// Words rising from their baseline mask: hidden before the cue, already 40 % up on the cue frame.
+const riseFrom = (p) => (1 - p) * 60;
 const PAPER_DIM = 'rgba(238,234,226,0.72)', INK_DIM = 'rgba(17,17,17,0.72)';
 
 await document.fonts.load('900 100px Disp');
@@ -143,7 +147,8 @@ function drawS1(t) {
     const dt = t - CUE['word-make'] - (i - 2) * 0.03;
     const d = lerp(150, 112, ease.outCubic(prog(dt, 0, 0.5)));
     setAxes(L1.glyphs[i], 800, d);
-    L1.glyphs[i].style.transform = `translateY(calc(${(1 - ease.outExpo(prog(dt, 0, 0.36))) * 100}% + ${recoil}px))`;
+    L1.glyphs[i].style.visibility = dt < 0 ? 'hidden' : 'visible';
+    L1.glyphs[i].style.transform = `translateY(calc(${riseFrom(ease.outExpo(prog(dt, 0, 0.36)))}% + ${recoil}px))`;
     if (i === 2 && dt >= 0) shown.push(['MAKE', 800, d, CUE['word-make']]);
   }
   // "THINGS" unfolds from the left margin: width and weight together
@@ -161,7 +166,7 @@ function drawS1(t) {
     const sy = spring(dt, 3.2, 0.32);
     let w = 1000, d = 64, lift = 0;
     if (POPS[i] !== undefined) {
-      const k = kick(t - POPS[i], 3.4, 0.3);
+      const k = hit(t - POPS[i], 3.4, 0.55);
       w -= 700 * Math.max(0, k);
       d += 46 * Math.max(0, k);
       lift = -80 * k;
@@ -217,12 +222,12 @@ function drawS2(t) {
   } else if (u < t4) {
     const dt = u - tSq;
     const n = 2 + 8 * spring(dt, 2.6, 0.38);
-    squircle(ctx, cx, cy, A * (1 + 0.14 * kick(dt, 4, 0.4)), Math.max(1.3, n), (Math.PI / 2) * spring(dt, 2.0, 0.5));
+    squircle(ctx, cx, cy, A * (1 + 0.14 * hit(dt, 4, 0.5)), Math.max(1.3, n), (Math.PI / 2) * spring(dt, 2.0, 0.5));
     ctx.fill();
     readout = `superellipse  n ${n.toFixed(2)}`;
   } else {
     const n0 = 2 + 8 * spring(u - tSq, 2.6, 0.38);
-    const d4 = A / 2 + 34 * spring(u - t4, 3, 0.4);
+    const d4 = A / 2 + (u >= t4 ? 12 + 22 * spring(u - t4, 3, 0.4) : 0);   // the gap opens on the beat
     for (let q = 0; q < 4; q++) {
       const qx = q & 1 ? 1 : -1, qy = q & 2 ? 1 : -1;
       const qcx = cx + qx * d4, qcy = cy + qy * d4;
@@ -247,13 +252,15 @@ function drawS2(t) {
   if (u >= tMos) {
     const cols = 6, rows = 10, cw = W / cols, ch = H / rows;
     const maxD = Math.hypot(W, H) * 0.62;
+    let dMin = Infinity;   // the nearest cell starts exactly on the cue
+    for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) dMin = Math.min(dMin, Math.hypot((c + 0.5) * cw - cx, (r + 0.5) * ch - cy));
     ctx.fillStyle = PAPER;
     for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) {
       const x = (c + 0.5) * cw, y = (r + 0.5) * ch;
-      const delay = 0.3 * clamp(Math.hypot(x - cx, y - cy) / maxD);
+      const delay = 0.3 * clamp((Math.hypot(x - cx, y - cy) - dMin) / maxD);
       const p = prog(u - tMos - delay, 0, 0.26);
       if (p <= 0) continue;
-      const s = lerp(0.18, 1, ease.outExpo(p)), w = (cw + 2) * s, h = (ch + 2) * s;
+      const s = lerp(0.3, 1, ease.outExpo(p)), w = (cw + 2) * s, h = (ch + 2) * s;
       ctx.beginPath();
       ctx.roundRect(x - w / 2, y - h / 2, w, h, (1 - p) * Math.min(w, h) / 2);
       ctx.fill();
@@ -308,7 +315,7 @@ function ballAt(t) {
 
 function drawBall(ctx, b, t, contactTimes, color = ACCENT) {
   let sq = 0;
-  for (const c of contactTimes) sq = Math.max(sq, kick(t - c, 6, 0.45));
+  for (const c of contactTimes) sq = Math.max(sq, hit(t - c, 6, 0.55));   // full squash on the contact frame
   ctx.fillStyle = color;
   ctx.beginPath();
   if (sq > 0.02) {
@@ -329,11 +336,13 @@ function drawS3(t) {
   under.fillRect(M, floor, CW * ease.outExpo(prog(t, CUE.weight, CUE.weight + 0.45)), 6);
   // letters rise out of the floor, then take the hits
   L.glyphs.forEach((g, i) => {
-    const rise = ease.outExpo(prog(t - CUE.weight - i * 0.035, 0, 0.42));
+    const dr = t - CUE.weight - i * 0.035;
+    const rise = ease.outExpo(prog(dr, 0, 0.42));
     let q = 0;
-    for (const h of hits) q += kick(t - h.t, 4.5, 0.28) * (h.gi === i ? 1 : Math.abs(h.gi - i) === 1 ? 0.3 : 0);
+    for (const h of hits) q += hit(t - h.t, 4.5, 0.45) * (h.gi === i ? 1 : Math.abs(h.gi - i) === 1 ? 0.3 : 0);
     setAxes(g, 900 - 260 * Math.max(0, q), 100 + 34 * Math.max(0, q));
-    g.style.transform = `translateY(${(1 - rise) * 100}%) scale(${1 + 0.1 * q}, ${1 - 0.24 * q})`;
+    g.style.visibility = dr < 0 ? 'hidden' : 'visible';
+    g.style.transform = `translateY(${riseFrom(rise)}%) scale(${1 + 0.1 * q}, ${1 - 0.24 * q})`;
   });
   const b = ballAt(t);
   const nHit = hits.filter((h) => t >= h.t).length;
@@ -397,7 +406,8 @@ function drawS4(t) {
     for (const s of snaps) a += 90 * ease.outExpo(prog(t - s - k * 0.06, 0, 0.42));
     a *= dir;
     if (k === 0) a0 = a;
-    const grow = spring(u - k * 0.06, 2.4, 0.5);
+    const gu = u - k * 0.06;
+    const grow = gu < 0 ? 0 : 0.35 + 0.65 * spring(gu, 2.4, 0.5);   // visible on the downbeat
     const R = lerp(400, 468, col);
     const y = lerp(960 + (k - 1) * 330, AXIS_Y, col);
     const tilt = lerp(tiltBase + (k - 1) * 6, 0, col);
@@ -546,16 +556,17 @@ function drawS6(t) {
   L.glyphs.forEach((g, i) => {
     const dt = t - CUE.name - i * 0.04;
     const rise = ease.outExpo(prog(dt, 0, 0.45));
-    let w = lerp(1, 900, ease.outExpo(prog(dt, 0, 0.5)));
+    g.style.visibility = dt < 0 ? 'hidden' : 'visible';
+    let w = lerp(300, 900, ease.outExpo(prog(dt, 0, 0.5)));
     let d = lerp(30, 46, spring(dt, 2.8, 0.45));
-    w -= 520 * Math.max(0, kick(t - CUE.tagline - i * 0.05, 3, 0.35));
+    w -= 520 * Math.max(0, hit(t - CUE.tagline - i * 0.05, 3, 0.6));
     const o = out - i * 0.02;
     w = lerp(w, 1, ease.inExpo(prog(o, 0, 0.4)));
     d = lerp(d, 30, ease.inCubic(prog(o, 0, 0.4)));
     const sink = ease.inExpo(prog(o, 0.22, 0.5));
-    const jolt = -40 * kick(o, 4, 0.4); // flinch on the outro downbeat before thinning out
+    const jolt = -40 * hit(o, 4, 0.6); // flinch on the outro downbeat before thinning out
     setAxes(g, w, d);
-    g.style.transform = `translateY(calc(${(1 - rise + sink) * 100}% + ${jolt}px))`;
+    g.style.transform = `translateY(calc(${riseFrom(rise) + sink * 100}% + ${jolt}px))`;
   });
 
   const ctx = over;
@@ -569,7 +580,7 @@ function drawS6(t) {
   const del = 1 - prog(out, 0.12, 0.34);
   let cursor = null;
   for (const ln of LINES) {
-    const n = Math.floor(clamp((t - ln.at) / TYPE_RATE, 0, ln.text.length) * del);
+    const n = t < ln.at ? 0 : Math.floor(Math.min(ln.text.length, Math.floor((t - ln.at) / TYPE_RATE) + 1) * del);
     if (n <= 0) continue;
     const s = ln.text.slice(0, n);
     mono(ctx, s, M, baseline + ln.dy, ln.color, ln.size);
@@ -605,6 +616,39 @@ function drawS6(t) {
     drawBall(ctx, { x: dotX, y, vx: 0, vy: 0, r }, t, contacts);
   }
 }
+
+// ---------- cue boxes: the element each cue moves, for tools/check.py (null = the whole frame) ----------
+function rectOf(els) {
+  let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+  for (const e of els) {
+    const r = e.getBoundingClientRect();
+    if (!r.width || !r.height) continue;
+    x0 = Math.min(x0, r.left); y0 = Math.min(y0, r.top); x1 = Math.max(x1, r.right); y1 = Math.max(y1, r.bottom);
+  }
+  return x0 < x1 ? [x0, y0, x1 - x0, y1 - y0] : null;
+}
+window.cueBox = (name) => {
+  const pops = { 'pop-m': 0, 'pop-v': 2, 'pop-e': 3 };
+  if (name === 'word-i') return rectOf([s1.L1.glyphs[0]]);
+  if (name === 'word-make') return rectOf(s1.L1.glyphs.slice(2));
+  if (name === 'word-things') return rectOf(s1.L2.glyphs);
+  if (name === 'word-move') return rectOf(s1.L3.glyphs);
+  if (name in pops) return rectOf([s1.L3.glyphs[pops[name]]]);
+  if (name === 'squircle' || name === 'split-4') return [S2_C.x - 280, S2_C.y - 280, 560, 560];
+  if (name === 'split-16') return [S2_C.x - 420, S2_C.y - 420, 840, 840];
+  if (name === 'mosaic') return [S2_C.x - 180, S2_C.y - 96, 360, 192];          // the two nearest cells
+  if (name === 'weight') return rectOf(s3.L.glyphs);
+  if (name.startsWith('bounce-')) {
+    // the hit letter's cap height: the ball's underside meets its top edge exactly at contact
+    const g = rectOf([s3.L.glyphs[S3.hits[Number(name.slice(-1)) - 1].gi]]);
+    const capTop = S3.baseline - CAP * S3.fs;
+    return g && [g[0], capTop, g[2], S3.baseline - capTop];
+  }
+  if (name === 'rings') return rectOf(s4.rings[0].glyphs);                     // the first ring, as it appears
+  if (name === 'name' || name === 'tagline' || name === 'outro') return rectOf(s6.L.glyphs);
+  if (name === 'period') return [M, S6.baseline + 200, 760, 80];                // the line typed on the landing
+  return null;
+};
 
 // ---------- seek ----------
 const SCENES = [[s1.el, drawS1], [null, drawS2], [s3.el, drawS3], [s4.el, drawS4], [null, drawS5], [s6.el, drawS6]];
