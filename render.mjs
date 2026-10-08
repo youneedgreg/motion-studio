@@ -78,6 +78,8 @@ async function render() {
 
   async function openPage() {
     const ctx = await browser.newContext({ viewport: { width: T.width, height: T.height }, deviceScaleFactor: 1 });
+    // --debug '{"noMasks":true}' sets window.filmDebug before the film's script runs (used by tools/check.py)
+    if (typeof args.debug === 'string') await ctx.addInitScript(`window.filmDebug = ${JSON.stringify(JSON.parse(args.debug))};`);
     await ctx.route('**/*', (route) => {
       const u = new URL(route.request().url());
       const f = u.origin === ORIGIN ? fileFor(u.pathname) : null;
@@ -106,6 +108,8 @@ async function render() {
       const x1 = Math.max(...bs.map((r) => r[0] + r[2])), y1 = Math.max(...bs.map((r) => r[1] + r[3]));
       boxes[c.name] = [x0, y0, x1 - x0, y1 - y0].map((v) => Math.round(v));
     }
+    const probe = await page.evaluate(() => (window.filmProbe ? window.filmProbe() : null));
+    if (probe) boxes._probe = probe;
     await ctx.close();
     await browser.close();
     writeFileSync(path.resolve(args['cue-boxes']), JSON.stringify(boxes, null, 1));
