@@ -43,8 +43,6 @@ jobs:
       fail-fast: false
       matrix:
         film: [safarios, florios-morph, reel]
-    # the reel predates the per-element cue-sync check and still fails it (17/28 cues); report, don't block
-    continue-on-error: ${{ matrix.film == 'reel' }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
