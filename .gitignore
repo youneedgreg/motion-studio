@@ -10,6 +10,6 @@ __pycache__/
 films/*/score.wav
 
 # reference footage and its extracted frames stay local
-refs/launch.mp4
+refs/*.mp4
 refs/frames/
 .DS_Store

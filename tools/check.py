@@ -224,3 +224,9 @@ sfx = {s['name']: s['t'] for s in BEATS['sfx']}
 dv = [abs(sfx[nm] - t) * 1000 for nm, t in cues]
 say(f'sfx ↔ cues    {len(dv)} cues, max |sfx − visual cue| {max(dv):.2f} ms')
 (OUT / f'{name}-check.txt').write_text('\n'.join(report) + '\n')
+
+# exit non-zero when any check failed, so CI can gate on it
+failed = [l for l in report if re.search(r'\s(FAIL|OFF|JUMP)\b', l)]
+if failed:
+    print(f'\n{len(failed)} check(s) failed', file=sys.stderr)
+    sys.exit(1)
