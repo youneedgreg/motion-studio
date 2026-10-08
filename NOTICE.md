@@ -17,6 +17,6 @@ SIL Open Font License, Version 1.1, included next to the font files:
 
 ## Reference videos
 
-Reference videos used for analysis (`refs/*.mp4`) and frames extracted from them (`refs/frames/`) are not
+Reference videos used for analysis (`refs/*.mp4`) and frames and contact sheets extracted from them (`refs/frames/`, `refs/*/frames/`, `refs/*/contact.png`) are not
 included in this repository and are excluded by `.gitignore`. They belong to their respective owners.
-The written analysis of them (`refs/beats.md`, `docs/style_guide.md`) is original work.
+The written analysis of them (`refs/*/beats.md`, `refs/best-of.md`, `docs/style_guide.md`) and the measured cut lists and palettes are original work.

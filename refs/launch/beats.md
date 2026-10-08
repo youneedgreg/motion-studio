@@ -1,10 +1,10 @@
 # launch.mp4 — beats
 
-1920×1080, 60 fps, 15.125 s. Read from the 2 fps frames in `refs/frames/`, 10 fps samples around each
+1920×1080, 60 fps, 15.125 s. Read from the 2 fps frames in `refs/launch/frames/`, 10 fps samples around each
 boundary, and per-frame pixel change for the transitions at 1.8, 3.75, 5.40 and 13.133 s.
-`~` = estimated (±0.1 s unless noted); unmarked times are frame-exact or match a `cuts_015.txt` detection.
+`~` = estimated (±0.1 s unless noted); unmarked times are frame-exact or match a `cuts.txt` (scene > 0.15) detection.
 
-Note: `refs/frames/f_N.png` is the source frame at **(N − 1) × 0.5 + 0.233 s**, not (N − 1) × 0.5 s
+Note: `refs/launch/frames/f_N.png` is the source frame at exactly **(N − 1) × 0.5 s** (every 30th frame). The first pass used `fps=2`, which sampled at (N − 1) × 0.5 + 0.233 s
 (matched against the source frame by frame). All times below come from direct seeks into the video.
 
 | # | Start | End | On screen | In via |
@@ -24,8 +24,18 @@ Note: `refs/frames/f_N.png` is the source frame at **(N − 1) × 0.5 + 0.233 s*
 
 **Rhythm:** after the first two beats (~1.8 s each), beats run 1.4–1.9 s through the product section,
 then the four colour cards change every 0.45, 0.467, 0.467, 0.467 s (11.28 → 11.73 → 12.20 → 12.67 → 13.13),
-i.e. 27–28 frames, ≈128 BPM if they sit on beats (unverified against the audio); then a ~2 s hold on the end card.
+i.e. 27–28 frames, ≈128 BPM; then a ~2 s hold on the end card.
 
-**Scene filter vs. beats:** `cuts_015.txt` catches 5.42, 7.28, 9.15, 11.28, 11.73, 12.20, 12.67, 13.13
+**Scene filter vs. beats:** `cuts.txt` (0.15) catches 5.42, 7.28, 9.15, 11.28, 11.73, 12.20, 12.67, 13.13
 (13.15 is a duplicate of the hard cut). It misses the blur-zoom at ~1.85, the fly-through at ~3.77
 and the pull-back at ~10.25.
+
+**Sound (measured):**
+- librosa reports 129.2 BPM (median inter-beat 464 ms), which matches the colour-card interval (0.45–0.467 s), so those cards are on the beat.
+- Each of the four card wipes (11.28, 11.73, 12.20, 12.67) and the hard cut (13.13) lands **102–109 ms before** its nearest detected onset. The offset is consistent, so the visuals lead the hits by about 6 frames, every time. librosa onsets can lag a sharp attack by a few tens of ms, so part of that gap may be the detector.
+- The earlier transitions sit 85–800 ms away from any onset; the slow section isn't cut to the music.
+- Overall −16.3 LUFS.
+
+**Palette** (`refs/launch/palette.json`, from the exact-time frames):
+- **Ground:** white `#fafafa`, blush `#f4e4e2`, lavender `#ebe6f4`.
+- **Accents:** purple (`#944fe3`, `#8040ce`), mustard `#b89b19`, blue `#4181cf`. These are the colour cards' fills plus the mascot's orange in small areas.
