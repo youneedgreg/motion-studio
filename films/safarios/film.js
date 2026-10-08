@@ -208,7 +208,7 @@ sub3.line.style.fontWeight = 500;
 const sub3Inner = (() => { const m = document.createElement('span'); m.className = 'mask'; const i = document.createElement('span'); i.textContent = 'Every enquiry on one board, scored hot, warm or cold.'; m.appendChild(i); sub3.line.replaceChildren(m); return i; })();
 const board = el(card3, { position: 'absolute', left: '80px', top: '330px', width: '1560px', height: '540px', transformOrigin: '50% 0%', transformStyle: 'preserve-3d' });
 const COLS = [
-  ['Enquiry', TINT.sky, '#0369a1', ['Luxury Kenya Highlights', 'Li W. · 2 guests', '$15,600']],
+  ['Enquiry', TINT.sky, '#0369a1', ['Savannah Slow Days', 'Li W. · 2 guests', '$15,600']],
   ['Quoted', TINT.amber, '#a16207', ['Honeymoon Under the Stars', 'Sofia R. · 2 guests', '$7,400']],
   ['Provisional', TINT.violet, '#6d28d9', ['Photographic Safari', 'Yuki T. · 2 guests', '$9,100']],
   ['Confirmed', TINT.emerald, '#047857', ['Amboseli & Kilimanjaro', "James O'C. · 4 guests", '$6,200']],
