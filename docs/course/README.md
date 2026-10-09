@@ -16,3 +16,5 @@ Eight lessons on making motion graphics with Claude, where every frame is render
 | 8 | [Brief, critique, ship](08-ship.md) | `/motion-film` skill | Models grade their own work leniently; use a fresh reviewer |
 
 The recurring lesson: **a check only proves what it measures.** Several bugs passed every automated check until a human looked, or a new check was written.
+
+**[References](REFERENCES.md):** every source the course used, grouped by how it was used: opened and checked, via the article, or standard.
