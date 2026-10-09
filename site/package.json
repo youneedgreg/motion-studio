@@ -9,6 +9,7 @@
     "serve": "node scripts/serve.mjs"
   },
   "dependencies": {
+    "@vercel/analytics": "^2.0.1",
     "marked": "^18.1.0",
     "next": "16.4.0",
     "react": "19.3.0",
