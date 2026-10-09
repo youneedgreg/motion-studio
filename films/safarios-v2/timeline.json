@@ -1,0 +1,384 @@
+{
+ "title": "safarios-v2",
+ "width": 1920,
+ "height": 1080,
+ "fps": 60,
+ "duration": 32,
+ "bpm": 120,
+ "beatsPerBar": 4,
+ "loop": false,
+ "formats": [
+  {
+   "name": "16x9",
+   "width": 1920,
+   "height": 1080,
+   "minTextPx": 56
+  },
+  {
+   "name": "9x16",
+   "width": 1080,
+   "height": 1920,
+   "minTextPx": 40
+  },
+  {
+   "name": "1x1",
+   "width": 1080,
+   "height": 1080,
+   "minTextPx": 40
+  }
+ ],
+ "palette": {
+  "forest": "#0e2a1f",
+  "forest3": "#1b4332",
+  "gold": "#e2a93f",
+  "goldDeep": "#b9811c",
+  "cream": "#f6f1e7",
+  "sand": "#ecdcbc",
+  "sage": "#dde7d8",
+  "ink": "#14211a",
+  "card": "#ffffff",
+  "statusHot": "#dc2626",
+  "statusHotGround": "#ecd6c4",
+  "statusHealthy": "#10b981"
+ },
+ "fonts": {
+  "display": "Inter",
+  "emphasis": "Fraunces italic"
+ },
+ "booking": {
+  "tour": "Honeymoon Under the Stars",
+  "client": "Sofia R.",
+  "party": "2 adults",
+  "park": "Maasai Mara",
+  "dates": "15–20 Jan 2027",
+  "source": "Website",
+  "sell": 7400,
+  "net": 5550,
+  "marginOnSell": 25.0,
+  "driver": "Joseph K.",
+  "vehicle": "Land Cruiser KDA 123A",
+  "pickup": "07:40"
+ },
+ "scenes": [
+  {
+   "name": "request",
+   "start": 0.0,
+   "end": 3.0,
+   "in": "opens on the caret (giant typed line, camera follows the caret)",
+   "settle": 1.7
+  },
+  {
+   "name": "scored",
+   "start": 3.0,
+   "end": 5.0,
+   "in": "pull-back: the typed line shrinks into the request card; the board slides in around it at 2.5",
+   "settle": 4.4
+  },
+  {
+   "name": "costed",
+   "start": 5.0,
+   "end": 9.0,
+   "in": "fly-through the \"Build quote\" button",
+   "settle": 8.3
+  },
+  {
+   "name": "drafted",
+   "start": 9.0,
+   "end": 12.0,
+   "in": "fly-through the trip title on the cost sheet",
+   "settle": 11.6
+  },
+  {
+   "name": "countdown",
+   "start": 12.0,
+   "end": 16.0,
+   "in": "morph: the itinerary card folds into the client phone",
+   "settle": 15.6
+  },
+  {
+   "name": "tripday",
+   "start": 16.0,
+   "end": 20.0,
+   "in": "device anchor: the same phone flips (Y 180°) into the driver phone",
+   "settle": 19.6
+  },
+  {
+   "name": "paid",
+   "start": 20.0,
+   "end": 23.0,
+   "in": "pull-back from the phone to the board",
+   "settle": 22.38
+  },
+  {
+   "name": "features",
+   "start": 23.0,
+   "end": 28.0,
+   "in": "fly-through the gold \"Fully paid\" chip onto a gold field; four circle wipes on the beat (24.0–25.5), then a gold circle opens onto the list",
+   "settle": 27.5
+  },
+  {
+   "name": "end",
+   "start": 28.0,
+   "end": 32.0,
+   "in": "the gold field contracts into the logo tile, taking the list with it",
+   "settle": 31.2
+  }
+ ],
+ "cues": [
+  {
+   "beat": 0.0,
+   "name": "caret",
+   "sfx": "kick-key"
+  },
+  {
+   "beat": 0.5,
+   "name": "type-1",
+   "sfx": "keys"
+  },
+  {
+   "beat": 1.0,
+   "name": "type-2",
+   "sfx": "keys"
+  },
+  {
+   "beat": 1.5,
+   "name": "type-3",
+   "sfx": "keys"
+  },
+  {
+   "beat": 2.0,
+   "name": "type-4",
+   "sfx": "keys"
+  },
+  {
+   "beat": 2.5,
+   "name": "type-5",
+   "sfx": "keys"
+  },
+  {
+   "beat": 3.0,
+   "name": "type-6",
+   "sfx": "keys"
+  },
+  {
+   "beat": 4.0,
+   "name": "pullback",
+   "sfx": "whoosh-out"
+  },
+  {
+   "beat": 5.0,
+   "name": "board",
+   "sfx": "thud"
+  },
+  {
+   "beat": 6.0,
+   "name": "score",
+   "sfx": "tick-run"
+  },
+  {
+   "beat": 7.0,
+   "name": "hot",
+   "sfx": "hit"
+  },
+  {
+   "beat": 8.0,
+   "name": "cap-scored",
+   "sfx": "pluck"
+  },
+  {
+   "beat": 9.0,
+   "name": "build-quote",
+   "sfx": "click"
+  },
+  {
+   "beat": 10.0,
+   "name": "costing",
+   "sfx": "whoosh-in"
+  },
+  {
+   "beat": 10.5,
+   "name": "row-1",
+   "sfx": "tick"
+  },
+  {
+   "beat": 11.0,
+   "name": "row-2",
+   "sfx": "tick"
+  },
+  {
+   "beat": 11.5,
+   "name": "row-3",
+   "sfx": "tick"
+  },
+  {
+   "beat": 12.0,
+   "name": "row-4",
+   "sfx": "tick"
+  },
+  {
+   "beat": 13.0,
+   "name": "totals",
+   "sfx": "rise"
+  },
+  {
+   "beat": 14.0,
+   "name": "margin",
+   "sfx": "chime"
+  },
+  {
+   "beat": 15.0,
+   "name": "advisor",
+   "sfx": "chord"
+  },
+  {
+   "beat": 18.0,
+   "name": "itinerary",
+   "sfx": "whoosh-in"
+  },
+  {
+   "beat": 18.5,
+   "name": "prompt",
+   "sfx": "keys"
+  },
+  {
+   "beat": 19.5,
+   "name": "day-1",
+   "sfx": "page"
+  },
+  {
+   "beat": 20.5,
+   "name": "day-2",
+   "sfx": "page"
+  },
+  {
+   "beat": 21.5,
+   "name": "day-3",
+   "sfx": "page"
+  },
+  {
+   "beat": 23.0,
+   "name": "publish",
+   "sfx": "click"
+  },
+  {
+   "beat": 24.0,
+   "name": "portal-30",
+   "sfx": "morph-hit"
+  },
+  {
+   "beat": 26.0,
+   "name": "portal-14",
+   "sfx": "world"
+  },
+  {
+   "beat": 28.0,
+   "name": "portal-7",
+   "sfx": "world"
+  },
+  {
+   "beat": 30.0,
+   "name": "portal-1",
+   "sfx": "world"
+  },
+  {
+   "beat": 32.0,
+   "name": "driver-flip",
+   "sfx": "flip"
+  },
+  {
+   "beat": 32.0,
+   "name": "cap-nologin",
+   "sfx": "pluck"
+  },
+  {
+   "beat": 33.0,
+   "name": "stop-1",
+   "sfx": "ping"
+  },
+  {
+   "beat": 35.0,
+   "name": "stop-2",
+   "sfx": "ping"
+  },
+  {
+   "beat": 37.0,
+   "name": "stop-3",
+   "sfx": "ping"
+  },
+  {
+   "beat": 40.0,
+   "name": "board-back",
+   "sfx": "whoosh-out"
+  },
+  {
+   "beat": 41.5,
+   "name": "payment",
+   "sfx": "pay-chime"
+  },
+  {
+   "beat": 42.5,
+   "name": "fully-paid",
+   "sfx": "hit"
+  },
+  {
+   "beat": 44.0,
+   "name": "completed",
+   "sfx": "pluck"
+  },
+  {
+   "beat": 46.0,
+   "name": "rest",
+   "sfx": "drop"
+  },
+  {
+   "beat": 48.0,
+   "name": "field-1",
+   "sfx": "wipe"
+  },
+  {
+   "beat": 49.0,
+   "name": "field-2",
+   "sfx": "wipe"
+  },
+  {
+   "beat": 50.0,
+   "name": "field-3",
+   "sfx": "wipe"
+  },
+  {
+   "beat": 51.0,
+   "name": "field-4",
+   "sfx": "wipe"
+  },
+  {
+   "beat": 52.0,
+   "name": "list",
+   "sfx": "chord"
+  },
+  {
+   "beat": 56.0,
+   "name": "end",
+   "sfx": "big-hit"
+  },
+  {
+   "beat": 56.5,
+   "name": "h1-1",
+   "sfx": "pluck"
+  },
+  {
+   "beat": 57.0,
+   "name": "h1-2",
+   "sfx": "pluck"
+  },
+  {
+   "beat": 58.0,
+   "name": "cta",
+   "sfx": "pluck"
+  },
+  {
+   "beat": 61.0,
+   "name": "cta-press",
+   "sfx": "click"
+  }
+ ]
+}
