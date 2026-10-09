@@ -1,0 +1,38 @@
+step response (closed form vs semi-implicit Euler, dt = 1e-5, t in 0..2 s)
+case          freq  damp   max|closed−sim|  overshoot  settle 2%   |1−x(2 s)|   |1−x(10 s)|
+SNAPPY         3.5  0.85           7.40e-5      0.63 %    0.190 s      0.00e+0      0.00e+0
+DEFAULT        2.2   0.8           4.78e-5      1.52 %    0.272 s     4.13e-10      0.00e+0
+HEAVY          1.4     1           2.74e-5      0.00 %    0.663 s      4.25e-7      0.00e+0
+CAMERA         1.2  0.95           2.41e-5      0.01 %    0.698 s      1.83e-6      0.00e+0
+PLAYFUL        2.5   0.5           6.41e-5     16.30 %    0.514 s      3.51e-9      0.00e+0
+damp 0.3       2.2   0.3           6.28e-5     37.23 %    0.812 s      1.56e-4      0.00e+0
+damp 0.8       2.2   0.8           4.78e-5      1.52 %    0.272 s     4.13e-10      0.00e+0
+damp 1         2.2     1           4.30e-5      0.00 %    0.422 s     2.82e-11      0.00e+0
+damp 1.5       2.2   1.5           3.40e-5      0.00 %    0.771 s      3.04e-5      0.00e+0
+damp 3         2.2     3           2.03e-5      0.00 %    1.662 s      8.97e-3     5.16e-11
+
+springTrack retargeting (targets change before earlier moves settle), t in 0..3 s
+  SNAPPY       max|track − sim| 1.85e-4
+  DEFAULT      max|track − sim| 1.19e-4
+  HEAVY        max|track − sim| 7.07e-5
+  CAMERA       max|track − sim| 6.29e-5
+  PLAYFUL      max|track − sim| 1.63e-4
+  damp 0.3     max|track − sim| 1.78e-4
+  damp 0.8     max|track − sim| 1.19e-4
+  damp 1       max|track − sim| 1.08e-4
+  damp 1.5     max|track − sim| 8.64e-5
+  damp 3       max|track − sim| 4.98e-5
+
+periodic springTrack (period 3 s): seam and steady state vs ODE
+  SNAPPY       |Δvalue| 0.0e+0  |Δvelocity| 1.5e-4  steady state: max|track − sim| 1.04e-4, max|velocity err| 1.11e-3
+  DEFAULT      |Δvalue| 0.0e+0  |Δvelocity| 5.7e-5  steady state: max|track − sim| 6.68e-5, max|velocity err| 4.34e-4
+  HEAVY        |Δvalue| 0.0e+0  |Δvelocity| 2.4e-5  steady state: max|track − sim| 3.96e-5, max|velocity err| 1.73e-4
+  CAMERA       |Δvalue| 0.0e+0  |Δvelocity| 1.8e-5  steady state: max|track − sim| 3.55e-5, max|velocity err| 1.23e-4
+  PLAYFUL      |Δvalue| 0.0e+0  |Δvelocity| 7.5e-5  steady state: max|track − sim| 8.97e-5, max|velocity err| 5.36e-4
+  damp 0.3     |Δvalue| 0.0e+0  |Δvelocity| 6.9e-5  steady state: max|track − sim| 9.09e-5, max|velocity err| 4.66e-4
+  damp 0.8     |Δvalue| 0.0e+0  |Δvelocity| 5.7e-5  steady state: max|track − sim| 6.68e-5, max|velocity err| 4.34e-4
+  damp 1       |Δvalue| 0.0e+0  |Δvelocity| 5.7e-5  steady state: max|track − sim| 6.04e-5, max|velocity err| 4.47e-4
+  damp 1.5     |Δvalue| 0.0e+0  |Δvelocity| 5.8e-5  steady state: max|track − sim| 4.87e-5, max|velocity err| 4.65e-4
+  damp 3       |Δvalue| 0.0e+0  |Δvelocity| 5.8e-5  steady state: max|track − sim| 2.83e-5, max|velocity err| 4.87e-4
+
+all spring tests passed

@@ -1,0 +1,16 @@
+determinism   120/120 frame hashes identical across two renders of 0-2 s  OK
+file          out/safarios-v2-1x1.mp4  stream|codec_name=h264|width=1080|height=1080|pix_fmt=yuv420p|r_frame_rate=60/1|nb_frames=1920 | stream|codec_name=aac|r_frame_rate=0/0|nb_frames=1501
+contact sheet out/safarios-v2-1x1-contact.png (64 frames, one per beat)
+loudness      -14.1 LUFS integrated, true peak -1.2 dBTP  OK
+cue sync      51/51 cues: first visible change of the cued element within 1 frame of its sound (median +0.0 ms, range -17..+17 ms)  OK
+              caret:+0  type-1:+0  type-2:+0  type-3:+0  type-4:+0  type-5:+0  type-6:+0  pullback:+17  board:+17  score:+0  hot:+0  cap-scored:+17  build-quote:+0  costing:+0  row-1:+0  row-2:+0  row-3:+0  row-4:+0  totals:+0  margin:+0  advisor:+17  itinerary:+0  prompt:+17  day-1:+17  day-2:+17  day-3:+17  publish:+0  portal-30:+17  portal-14:+0  portal-7:+0  portal-1:+0  driver-flip:+0  cap-nologin:+0  stop-1:+0  stop-2:+0  stop-3:+0  board-back:+0  payment:+0  fully-paid:+0  completed:+17  rest:+0  field-1:+0  field-2:+0  field-3:+0  field-4:+0  list:+0  end:+17  h1-1:+0  h1-2:+0  cta:+0  cta-press:-17
+text visible  9/9 scenes identical at their settle time with text masks off (exact)  OK
+text visible  9/9 scenes identical at their settle time with container clip off too (tolerance 8 levels)  OK
+text size     smallest readable text per scene ≥ 40 px  OK
+              request:190  scored:45  costed:45  drafted:45  countdown:45  tripday:45  paid:45  features:56  end:40
+audio onsets  240 detected: median |offset| from 16th grid 6.7 ms, 94% within 20 ms
+sfx placement (internal consistency)  51 cues, max |sfx time − cue time| 0.00 ms
+audio images  out/safarios-v2-1x1-spectrum.png (log frequency), out/safarios-v2-1x1-wave.png
+clipping      0 samples at or beyond full scale (|x| >= 1.0); astats flat factor 0.00  OK
+astats        DC offset -0.000075 / +0.000005 (L / R), crest factor 5.82 (15.3 dB) / 5.62 (15.0 dB)
+small speaker -15.7 LUFS after two 150 Hz high-pass stages vs -14.1 LUFS full range: 1.6 LU drop

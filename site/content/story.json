@@ -1,0 +1,461 @@
+[
+ {
+  "pr": null,
+  "date": "2026-10-05T22:40:43+03:00",
+  "title": "Initial commit",
+  "branch": null,
+  "commits": [],
+  "files": 0,
+  "insertions": 0,
+  "deletions": 0,
+  "areas": []
+ },
+ {
+  "pr": 1,
+  "branch": "add-palette-and-env-deny",
+  "date": "2026-10-05T22:43:23+03:00",
+  "title": "Add palette extractor and deny reading .env files",
+  "commits": [
+   "Add palette extractor and deny reading .env files"
+  ],
+  "files": 2,
+  "insertions": 29,
+  "deletions": 0,
+  "areas": [
+   {
+    "path": ".claude/settings.json",
+    "files": 1
+   },
+   {
+    "path": "palette.py",
+    "files": 1
+   }
+  ]
+ },
+ {
+  "pr": 2,
+  "branch": "add-reel-showreel",
+  "date": "2026-10-05T23:21:34+03:00",
+  "title": "Add 15 s showreel film with renderer, synthesized score and checks",
+  "commits": [
+   "Add 15 s showreel film, frame-accurate renderer and check tools"
+  ],
+  "files": 10,
+  "insertions": 1581,
+  "deletions": 0,
+  "areas": [
+   {
+    "path": "films/reel",
+    "files": 5
+   },
+   {
+    "path": "tools",
+    "files": 2
+   },
+   {
+    "path": ".gitignore",
+    "files": 1
+   },
+   {
+    "path": "lib",
+    "files": 1
+   },
+   {
+    "path": "render.mjs",
+    "files": 1
+   }
+  ]
+ },
+ {
+  "pr": 3,
+  "branch": "safarios-film",
+  "date": "2026-10-07T20:35:56+03:00",
+  "title": "Add SafariOS product film; switch reel to Inter; per-element cue sync check",
+  "commits": [
+   "Add SafariOS film; switch reel to Inter; per-element sync check"
+  ],
+  "files": 27,
+  "insertions": 2384,
+  "deletions": 87,
+  "areas": [
+   {
+    "path": "assets",
+    "files": 5
+   },
+   {
+    "path": "films/safarios",
+    "files": 5
+   },
+   {
+    "path": "refs",
+    "files": 4
+   },
+   {
+    "path": "films/reel",
+    "files": 2
+   },
+   {
+    "path": ".gitignore",
+    "files": 1
+   },
+   {
+    "path": "CLAUDE.md",
+    "files": 1
+   },
+   {
+    "path": "docs/palette.json",
+    "files": 1
+   },
+   {
+    "path": "docs/shotlist.md",
+    "files": 1
+   },
+   {
+    "path": "docs/style_guide.md",
+    "files": 1
+   },
+   {
+    "path": "lib",
+    "files": 1
+   },
+   {
+    "path": "palette.py",
+    "files": 1
+   },
+   {
+    "path": "preview-test.html",
+    "files": 1
+   },
+   {
+    "path": "render.mjs",
+    "files": 1
+   },
+   {
+    "path": "test.js",
+    "files": 1
+   },
+   {
+    "path": "tools",
+    "files": 1
+   }
+  ]
+ },
+ {
+  "pr": 4,
+  "branch": "florios-morph",
+  "date": "2026-10-08T03:25:45+03:00",
+  "title": "Add florios-morph film with per-state geometry, text-visibility and loop checks",
+  "commits": [
+   "Add florios-morph film; text-mask and per-state geometry checks"
+  ],
+  "files": 10,
+  "insertions": 894,
+  "deletions": 0,
+  "areas": [
+   {
+    "path": "films/florios-morph",
+    "files": 4
+   },
+   {
+    "path": "assets",
+    "files": 2
+   },
+   {
+    "path": "lib",
+    "files": 2
+   },
+   {
+    "path": "render.mjs",
+    "files": 1
+   },
+   {
+    "path": "tools",
+    "files": 1
+   }
+  ]
+ },
+ {
+  "pr": 5,
+  "branch": "renderer-hardening",
+  "date": "2026-10-08T03:48:41+03:00",
+  "title": "Harden renderer: real file paths, root containment, bt709 tagging, fail fast on page errors",
+  "commits": [
+   "Harden renderer: real file paths, strict root containment, explicit bt709, fail fast on page errors",
+   "Ignore every reference video in refs/, not just launch.mp4",
+   "Add CI: lint + render-and-check every film on Linux",
+   "Fix CI workflow YAML: quote a step name containing ': '"
+  ],
+  "files": 5,
+  "insertions": 126,
+  "deletions": 15,
+  "areas": [
+   {
+    "path": ".github",
+    "files": 1
+   },
+   {
+    "path": ".gitignore",
+    "files": 1
+   },
+   {
+    "path": "render.mjs",
+    "files": 1
+   },
+   {
+    "path": "requirements.txt",
+    "files": 1
+   },
+   {
+    "path": "tools",
+    "files": 1
+   }
+  ]
+ },
+ {
+  "pr": 6,
+  "branch": "springs",
+  "date": "2026-10-08T04:04:25+03:00",
+  "title": "Springs: exact responses for every damping ratio, presets, and ODE tests",
+  "commits": [
+   "Springs: exact responses for every damping ratio, presets, and ODE tests"
+  ],
+  "files": 3,
+  "insertions": 130,
+  "deletions": 6,
+  "areas": [
+   {
+    "path": ".github",
+    "files": 1
+   },
+   {
+    "path": "lib",
+    "files": 1
+   },
+   {
+    "path": "tools",
+    "files": 1
+   }
+  ]
+ },
+ {
+  "pr": 9,
+  "branch": "reel-sync",
+  "date": "2026-10-08T04:07:04+03:00",
+  "title": "Reel: every cue lands within a frame of its sound; make its CI job blocking",
+  "commits": [
+   "Reel: every cue lands within a frame of its sound; make its CI job blocking"
+  ],
+  "files": 2,
+  "insertions": 60,
+  "deletions": 18,
+  "areas": [
+   {
+    "path": ".github",
+    "files": 1
+   },
+   {
+    "path": "films/reel",
+    "files": 1
+   }
+  ]
+ },
+ {
+  "pr": 10,
+  "branch": "audio-checks",
+  "date": "2026-10-08T04:38:15+03:00",
+  "title": "Audio: strict mastering, per-sound seeds, audio health checks, phone-friendly low end",
+  "commits": [
+   "Audio: strict mastering, per-sound noise seeds, and audio health checks",
+   "florios-morph: low end that survives phone speakers (small-speaker drop 2.9 -> 1.7 LU)"
+  ],
+  "files": 4,
+  "insertions": 98,
+  "deletions": 42,
+  "areas": [
+   {
+    "path": "films/florios-morph",
+    "files": 2
+   },
+   {
+    "path": "lib",
+    "files": 1
+   },
+   {
+    "path": "tools",
+    "files": 1
+   }
+  ]
+ },
+ {
+  "pr": 11,
+  "branch": "public-prep",
+  "date": "2026-10-08T04:59:49+03:00",
+  "title": "Prepare repo for public release",
+  "commits": [
+   "Prepare repo for public release"
+  ],
+  "files": 4,
+  "insertions": 44,
+  "deletions": 1,
+  "areas": [
+   {
+    "path": "LICENSE",
+    "files": 1
+   },
+   {
+    "path": "NOTICE.md",
+    "files": 1
+   },
+   {
+    "path": "docs/shotlist.md",
+    "files": 1
+   },
+   {
+    "path": "refs",
+    "files": 1
+   }
+  ]
+ },
+ {
+  "pr": 13,
+  "branch": "public-prep",
+  "date": "2026-10-08T05:03:07+03:00",
+  "title": "safarios: fictional tour title on the pipeline board",
+  "commits": [
+   "safarios: fictional tour title on the pipeline board (was a real package name)"
+  ],
+  "files": 1,
+  "insertions": 1,
+  "deletions": 1,
+  "areas": [
+   {
+    "path": "films/safarios",
+    "files": 1
+   }
+  ]
+ },
+ {
+  "pr": 12,
+  "branch": "motion-film-skill",
+  "date": "2026-10-08T05:08:22+03:00",
+  "title": "Add motion-film project skill",
+  "commits": [
+   "Add motion-film project skill"
+  ],
+  "files": 4,
+  "insertions": 319,
+  "deletions": 0,
+  "areas": [
+   {
+    "path": ".claude/skills",
+    "files": 4
+   }
+  ]
+ },
+ {
+  "pr": 14,
+  "branch": "ref-analysis",
+  "date": "2026-10-08T05:47:27+03:00",
+  "title": "Reference analysis: four launch films and best-of for Safari OS",
+  "commits": [
+   "Reference analysis for launch, launch2, launch3, launch4 and best-of"
+  ],
+  "files": 18,
+  "insertions": 689,
+  "deletions": 19,
+  "areas": [
+   {
+    "path": "refs",
+    "files": 15
+   },
+   {
+    "path": ".gitignore",
+    "files": 1
+   },
+   {
+    "path": "NOTICE.md",
+    "files": 1
+   },
+   {
+    "path": "docs/style_guide.md",
+    "files": 1
+   }
+  ]
+ },
+ {
+  "pr": 15,
+  "branch": "safarios-v2",
+  "date": "2026-10-09T05:42:01+03:00",
+  "title": "safarios-v2: one booking from request to paid, in 16:9, 9:16 and 1:1",
+  "commits": [
+   "safarios-v2: one booking from request to paid, in three formats"
+  ],
+  "files": 9,
+  "insertions": 2187,
+  "deletions": 46,
+  "areas": [
+   {
+    "path": "films/safarios-v2",
+    "files": 5
+   },
+   {
+    "path": "docs/safarios-v2",
+    "files": 2
+   },
+   {
+    "path": "render.mjs",
+    "files": 1
+   },
+   {
+    "path": "tools",
+    "files": 1
+   }
+  ]
+ },
+ {
+  "pr": 16,
+  "branch": "course-docs",
+  "date": "2026-10-09T05:42:36+03:00",
+  "title": "Course notes: eight lessons on code-rendered motion graphics",
+  "commits": [
+   "Course notes: eight lessons on code-rendered motion graphics"
+  ],
+  "files": 9,
+  "insertions": 188,
+  "deletions": 0,
+  "areas": [
+   {
+    "path": "docs/course",
+    "files": 9
+   }
+  ]
+ },
+ {
+  "pr": 17,
+  "branch": "readme",
+  "date": "2026-10-09T06:08:00+03:00",
+  "title": "README for the public repo, films in media/, and a renderer fix found by the quick start",
+  "commits": [
+   "README for the public repo, and the films' videos in media/",
+   "render.mjs: create the output folder, and exit cleanly if ffmpeg fails",
+   "README: say plainly that GitHub's file view downloads mp4s rather than playing them"
+  ],
+  "files": 9,
+  "insertions": 196,
+  "deletions": 0,
+  "areas": [
+   {
+    "path": "media",
+    "files": 7
+   },
+   {
+    "path": "README.md",
+    "files": 1
+   },
+   {
+    "path": "render.mjs",
+    "files": 1
+   }
+  ]
+ }
+]
