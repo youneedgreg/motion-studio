@@ -1,0 +1,25 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>safarios-v2</title>
+<style>
+  @font-face { font-family: 'Inter'; src: url('../../assets/fonts/inter/InterVariable.woff2') format('woff2'); font-weight: 100 900; }
+  @font-face { font-family: 'Fraunces'; src: url('../../assets/fonts/fraunces/fraunces-latin-full-italic.woff2') format('woff2'); font-weight: 100 900; font-style: italic; }
+  html, body { margin: 0; overflow: hidden; background: #f6f1e7; }
+  #frame { position: relative; overflow: hidden; font-family: 'Inter'; color: #14211a; -webkit-font-smoothing: antialiased;
+    font-variation-settings: 'opsz' 32; font-optical-sizing: none; font-feature-settings: 'tnum' 1, 'cv11' 1; }
+  .abs { position: absolute; left: 0; top: 0; }
+  .t { position: absolute; left: 0; top: 0; white-space: pre; line-height: 1; }
+  .mask { position: absolute; overflow: hidden; }
+  .mask > span { display: inline-block; white-space: pre; line-height: 1; }
+  .serif { font-family: 'Fraunces'; font-style: italic; font-weight: 450; letter-spacing: -0.01em; }
+  .card { position: absolute; background: #fff; box-shadow: 0 30px 60px -28px rgba(20,33,26,0.35), 0 2px 0 rgba(20,33,26,0.04); }
+  .chip { position: absolute; white-space: pre; line-height: 1; border-radius: 999px; font-weight: 700; }
+</style>
+</head>
+<body>
+<div id="frame"></div>
+<script type="module" src="./film.js"></script>
+</body>
+</html>

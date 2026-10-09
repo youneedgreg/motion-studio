@@ -1,4 +1,4 @@
-"""Objective checks for a film. Usage: .venv/bin/python tools/check.py films/reel [--skip-render]
+"""Objective checks for a film. Usage: .venv/bin/python tools/check.py films/reel [--skip-render] [--format 9x16]
 
 1. determinism: render 0-2 s twice, compare ffmpeg framemd5
 2. loop seam:   last frame vs first frame, against the film's typical frame-to-frame change
@@ -12,10 +12,19 @@ import numpy as np
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 film = pathlib.Path(sys.argv[1] if len(sys.argv) > 1 else 'films/reel')
 skip_render = '--skip-render' in sys.argv
-name = film.name
 T = json.loads((ROOT / film / 'timeline.json').read_text())
 BEATS = json.loads((ROOT / film / 'beats.json').read_text())
 FPS, W, H, DUR = T['fps'], T['width'], T['height'], T['duration']
+# --format 9x16: check one of timeline.json's formats. Outputs get a -9x16 suffix (the first format is the master).
+FMTS = T.get('formats', [])
+FMT_NAME = sys.argv[sys.argv.index('--format') + 1] if '--format' in sys.argv else None
+FMT = next((f for f in FMTS if f['name'] == FMT_NAME), None) if FMT_NAME else (FMTS[0] if FMTS else None)
+if FMT_NAME and not FMT:
+    raise SystemExit(f'no format {FMT_NAME!r} in timeline.json')
+if FMT:
+    W, H = FMT['width'], FMT['height']
+RF = ['--format', FMT['name']] if FMT else []   # passed to every render.mjs call
+name = film.name + (f"-{FMT['name']}" if FMT and FMT['name'] != FMTS[0]['name'] else '')
 B = 60 / T['bpm']
 OUT = ROOT / 'out'
 CHK = OUT / 'check' / name  # per film, so two checks never share scratch files
@@ -51,14 +60,14 @@ def gray_frames(path, w=108, h=192):
 # 1 · determinism
 if not skip_render:
     for tag in 'ab':
-        run(['node', 'render.mjs', str(film), '--from', '0', '--to', '2', '--no-audio', '--out', str(CHK / f'det_{tag}.mp4')])
+        run(['node', 'render.mjs', str(film), *RF, '--from', '0', '--to', '2', '--no-audio', '--out', str(CHK / f'det_{tag}.mp4')])
 a, b = framemd5(CHK / 'det_a.mp4'), framemd5(CHK / 'det_b.mp4')
 same = sum(x == y for x, y in zip(a, b))
 say(f'determinism   {same}/{len(a)} frame hashes identical across two renders of 0-2 s' + ('  OK' if same == len(a) == len(b) else '  FAIL'))
 
 # 3 · full render
 if not skip_render:
-    run(['node', 'render.mjs', str(film), '--out', str(final)], timeout=1800)
+    run(['node', 'render.mjs', str(film), *RF, '--out', str(final)], timeout=1800)
 probe = run(['ffprobe', '-v', 'error', '-show_entries', 'stream=codec_name,width,height,pix_fmt,r_frame_rate,nb_frames',
              '-of', 'compact', str(final)]).stdout.strip()
 say(f'file          {final.relative_to(ROOT)}  {probe.replace(chr(10), " | ")}')
@@ -103,7 +112,7 @@ def off_grid(ts):
 # wipes, cuts) are measured over the whole frame. A cue passes when its first visible change lands
 # within one frame of its sound (every SFX sits exactly on its cue, checked below).
 boxes_path = CHK / 'cue-boxes.json'
-run(['node', 'render.mjs', str(film), '--cue-boxes', str(boxes_path)])
+run(['node', 'render.mjs', str(film), *RF, '--cue-boxes', str(boxes_path)])
 boxes = json.loads(boxes_path.read_text())
 cues = [(c['name'], c['beat'] * B) for c in T['cues']]
 rows, lat, fails = [], [], []
@@ -112,6 +121,8 @@ for nm, t in cues:
     x, y, w, h = (0, 0, W, H) if not bx else bx
     x0, y0 = max(0, int(x) - 16), max(0, int(y) - 16)
     x1, y1 = min(W, int(x + w) + 16), min(H, int(y + h) + 16)
+    if x1 - x0 < 4 or y1 - y0 < 4:   # the box lies off frame: measure the whole frame, as for cues without a box
+        x0, y0, x1, y1 = 0, 0, W, H
     cw, ch = (x1 - x0) // 2 * 2, (y1 - y0) // 2 * 2
     first = int(np.ceil(t * FPS - 1e-6))          # first frame whose time is at or after the cue
     start = max(0, first - 4)
@@ -148,7 +159,7 @@ if 'states' in T:
     cx0, cy0 = T['container']['cx'], T['container']['cy']
     settle = [(S[j + 1]['t'] if j + 1 < len(S) else DUR) - 2 / FPS for j in range(len(S))]
     sdir = CHK / 'states'
-    run(['node', 'render.mjs', str(film), '--frames', str(sdir), '--stills', ','.join(f'{x:.4f}' for x in settle)])
+    run(['node', 'render.mjs', str(film), *RF, '--frames', str(sdir), '--stills', ','.join(f'{x:.4f}' for x in settle)])
 
     def runext(prof, c):
         if prof[c] < 0.5:
@@ -186,31 +197,62 @@ if 'states' in T:
     if T.get('loop'):
         say(f"state {'(loop)':<10s} t={DUR:>4.1f}  row repeats t=0; container at t={DUR} is frame 0 of the next pass")
     say(f'states        {len(S) - len(bad)}/{len(S)} within ±2 px of the table' + ('  OK' if not bad else f'  OFF: {", ".join(bad)}'))
-    # settled text is fully visible: each state 1.0 s after its action, rendered with and without the
-    # text masks (window.filmDebug.noMasks) — the frames must be pixel-identical. A second render also
-    # lifts the container clip (noClip): anti-aliasing under a clip shifts edges by a few levels, so only
-    # differences > 8 levels count there — a clipped glyph differs by far more than that.
-    tt = [s['t'] + 1.0 for s in S]
-    stl = ','.join(f'{x:.4f}' for x in tt)
+    probe = boxes.get('_probe')
+    if probe:
+        say(f"loop state    max |value(t={DUR}) − value(0)| {probe['loopValue']:.2e}, max |velocity(t={DUR}) − velocity(0)| {probe['loopVelocity']:.2e} (all tracks)"
+            + ('  OK' if probe['loopValue'] < 1e-3 and probe['loopVelocity'] < 1e-2 else '  OFF'))
+
+# settled text is fully visible. Morph films: each state 1.0 s after its action. Scene films (scenes with
+# start/end): each scene 0.3 s before it ends. Each time is rendered with and without the text masks
+# (window.filmDebug.noMasks) — the frames must be pixel-identical. A second render also lifts the container
+# clip (noClip): anti-aliasing under a clip shifts edges by a few levels, so only differences > 8 levels
+# count there — a clipped glyph differs by far more than that.
+if 'states' in T:
+    text_at = [(s['name'], s['t'] + 1.0) for s in T['states']]
+    unit = 'states identical at state + 1.0 s'
+else:
+    # each scene's `settle` time (all its text at rest); 0.3 s before the scene ends when it has none
+    text_at = [(sc['name'], sc.get('settle', sc['end'] - 0.3)) for sc in T.get('scenes', []) if isinstance(sc, dict)]
+    unit = 'scenes identical at their settle time'
+if text_at:
+    from PIL import Image
+    stl = ','.join(f'{x:.4f}' for _, x in text_at)
     variants = {'masks_on': None, 'masks_off': '{"noMasks":true}', 'clip_off': '{"noMasks":true,"noClip":true}'}
     for d, dbg in variants.items():
-        run(['node', 'render.mjs', str(film), '--frames', str(CHK / d), '--stills', stl] + (['--debug', dbg] if dbg else []))
+        run(['node', 'render.mjs', str(film), *RF, '--frames', str(CHK / d), '--stills', stl] + (['--debug', dbg] if dbg else []))
     load = lambda d, fn: np.asarray(Image.open(CHK / d / fn).convert('RGB')).astype(int)
     for other, tol, label in (('masks_off', 0, 'text masks off'), ('clip_off', 8, 'container clip off too')):
         clipped = []
-        for s, x in zip(S, tt):
+        for nm, x in text_at:
             fn = f't_{round(x * FPS) / FPS:.3f}.png'
             diff = np.abs(load('masks_on', fn) - load(other, fn)).max(axis=2)
             n = int((diff > tol).sum())
             if n:
                 ys, xs = np.nonzero(diff > tol)
-                clipped.append(f"{s['name']} ({n} px, x {xs.min()}–{xs.max()}, y {ys.min()}–{ys.max()}, max {diff.max()} levels)")
-        say(f'text visible  {len(S) - len(clipped)}/{len(S)} states identical at state + 1.0 s with {label}'
+                clipped.append(f"{nm} ({n} px, x {xs.min()}–{xs.max()}, y {ys.min()}–{ys.max()}, max {diff.max()} levels)")
+        say(f'text visible  {len(text_at) - len(clipped)}/{len(text_at)} {unit} with {label}'
             + (f' (tolerance {tol} levels)' if tol else ' (exact)') + ('  OK' if not clipped else f'  FAIL: {"; ".join(clipped)}'))
-    probe = boxes.get('_probe')
-    if probe:
-        say(f"loop state    max |value(t={DUR}) − value(0)| {probe['loopValue']:.2e}, max |velocity(t={DUR}) − velocity(0)| {probe['loopVelocity']:.2e} (all tracks)"
-            + ('  OK' if probe['loopValue'] < 1e-3 and probe['loopVelocity'] < 1e-2 else '  OFF'))
+
+# minimum text size: films that define window.filmTextAudit() list the readable text on screen with its rendered
+# size; at each settled time (as above) the smallest must reach the format's minTextPx.
+min_px = (FMT or {}).get('minTextPx')
+if min_px and text_at:
+    audit_path = CHK / 'text-audit.json'
+    run(['node', 'render.mjs', str(film), *RF, '--text-audit', str(audit_path), '--at', ','.join(f'{x:.4f}' for _, x in text_at)])
+    audit = json.loads(audit_path.read_text())
+    if all(a['items'] is None for a in audit):
+        say('text size     film has no window.filmTextAudit(); not measured')
+    else:
+        small, rows = [], []
+        for (nm, _), a in zip(text_at, audit):
+            items = a['items'] or []
+            if not items:
+                rows.append(f'{nm}:—'); continue
+            lo = min(items, key=lambda i: i['px'])
+            rows.append(f"{nm}:{lo['px']:.0f}")
+            small += [f"{nm} {i['px']:.0f}px {i['text'][:24]!r}" for i in items if i['px'] < min_px]
+        say(f'text size     smallest readable text per scene ≥ {min_px} px' + ('  OK' if not small else f'  FAIL: {"; ".join(small[:8])}'))
+        say('              ' + '  '.join(rows))
 
 # audio: onsets in the final mix vs the 16th grid, and every SFX cue against the visual cue it belongs to
 import librosa
