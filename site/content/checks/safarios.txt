@@ -1,0 +1,12 @@
+determinism   120/120 frame hashes identical across two renders of 0-2 s  OK
+file          out/safarios.mp4  stream|codec_name=h264|width=1920|height=1080|pix_fmt=yuv420p|r_frame_rate=60/1|nb_frames=1200 | stream|codec_name=aac|r_frame_rate=0/0|nb_frames=939
+contact sheet out/safarios-contact.png (40 frames, one per beat)
+loudness      -14.0 LUFS integrated, true peak -4.0 dBTP  OK
+cue sync      48/48 cues: first visible change of the cued element within 1 frame of its sound (median +0.0 ms, range +0..+17 ms)  OK
+              hook:+0  chip-1:+0  chip-2:+0  chip-3:+0  chip-4:+0  chip-5:+0  chip-6:+0  chip-7:+0  promise:+0  word-2:+0  word-3:+0  word-4:+17  mod-1:+0  mod-2:+8  askbar:+0  mod-3:+0  mod-4:+8  mod-5:+0  send:+0  pipeline:+0  hop-1:+17  hop-2:+17  hop-3:+17  canvas:+17  totals:+0  healthy:+0  advisor:+17  itinerary:+17  day-3:+17  callout-1:+0  phone:+0  driver:+17  status-3:+0  callout-2:+0  alert:+17  pullback:+17  pill-1:+0  pill-2:+0  pill-3:+0  field-1:+17  field-2:+17  field-3:+17  field-4:+17  end:+0  eyebrow:+0  line-1:+0  line-2:+0  cta:+0
+audio onsets  128 detected: median |offset| from 16th grid 7.7 ms, 99% within 20 ms
+sfx placement (internal consistency)  48 cues, max |sfx time − cue time| 0.00 ms
+audio images  out/safarios-spectrum.png (log frequency), out/safarios-wave.png
+clipping      0 samples at or beyond full scale (|x| >= 1.0); astats flat factor 0.00  OK
+astats        DC offset -0.000014 / +0.000133 (L / R), crest factor 3.16 (10.0 dB) / 3.31 (10.4 dB)
+small speaker -18.7 LUFS after two 150 Hz high-pass stages vs -14.0 LUFS full range: 4.7 LU drop

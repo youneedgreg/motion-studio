@@ -1,0 +1,13 @@
+determinism   120/120 frame hashes identical across two renders of 0-2 s  OK
+file          out/reel.mp4  stream|codec_name=h264|width=1080|height=1920|pix_fmt=yuv420p|r_frame_rate=60/1|nb_frames=900 | stream|codec_name=aac|r_frame_rate=0/0|nb_frames=705
+loop seam     last→first change 0.64 vs median per-frame change 0.89, 95th pct 12.23  OK
+contact sheet out/reel-contact.png (24 frames, one per beat)
+loudness      -13.9 LUFS integrated, true peak -4.0 dBTP  OK
+cue sync      28/28 cues: first visible change of the cued element within 1 frame of its sound (median +6.2 ms, range -8..+17 ms)  OK
+              word-i:+0  word-make:+4  word-things:+8  word-move:+17  pop-m:+4  pop-v:-8  pop-e:+13  ring:+0  squircle:+8  split-4:+0  split-16:+4  mosaic:+8  weight:+0  bounce-1:+8  bounce-2:+0  bounce-3:-8  rings:+0  snap-1:+8  snap-2:+17  collapse:+8  doors:+17  ease-inout:+8  ease-back:+0  ease-spring:+8  name:+0  period:+8  tagline:+0  outro:+8
+audio onsets  73 detected: median |offset| from 16th grid 5.7 ms, 99% within 20 ms
+sfx placement (internal consistency)  28 cues, max |sfx time − cue time| 0.00 ms
+audio images  out/reel-spectrum.png (log frequency), out/reel-wave.png
+clipping      0 samples at or beyond full scale (|x| >= 1.0); astats flat factor 0.00  OK
+astats        DC offset +0.000319 / +0.000509 (L / R), crest factor 3.05 (9.7 dB) / 3.18 (10.1 dB)
+small speaker -17.9 LUFS after two 150 Hz high-pass stages vs -13.9 LUFS full range: 4.0 LU drop

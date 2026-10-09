@@ -1,0 +1,130 @@
+[
+ {
+  "name": "florios-morph",
+  "fps": 60,
+  "duration": 12,
+  "bpm": 120,
+  "beatsPerBar": 3,
+  "loop": true,
+  "cues": 15,
+  "outputs": [
+   {
+    "format": "1080x1920",
+    "width": 1080,
+    "height": 1920,
+    "name": "florios-morph",
+    "video": "/videos/florios-morph.mp4",
+    "poster": "/videos/florios-morph.jpg",
+    "videoBytes": 684309,
+    "check": "florios-morph.txt",
+    "checkedAt": "2026-10-09T02:48:51.511Z",
+    "contact": "/films/florios-morph-contact.jpg",
+    "spectrum": "/films/florios-morph-spectrum.jpg",
+    "wave": "/films/florios-morph-wave.png"
+   }
+  ]
+ },
+ {
+  "name": "reel",
+  "fps": 60,
+  "duration": 15,
+  "bpm": 96,
+  "beatsPerBar": 4,
+  "loop": true,
+  "cues": 28,
+  "outputs": [
+   {
+    "format": "1080x1920",
+    "width": 1080,
+    "height": 1920,
+    "name": "reel",
+    "video": "/videos/reel.mp4",
+    "poster": "/videos/reel.jpg",
+    "videoBytes": 2280445,
+    "check": "reel.txt",
+    "checkedAt": "2026-10-09T02:48:13.141Z",
+    "contact": "/films/reel-contact.jpg",
+    "spectrum": "/films/reel-spectrum.jpg",
+    "wave": "/films/reel-wave.png"
+   }
+  ]
+ },
+ {
+  "name": "safarios",
+  "fps": 60,
+  "duration": 20,
+  "bpm": 120,
+  "beatsPerBar": 4,
+  "loop": false,
+  "cues": 48,
+  "outputs": [
+   {
+    "format": "1920x1080",
+    "width": 1920,
+    "height": 1080,
+    "name": "safarios",
+    "video": "/videos/safarios.mp4",
+    "poster": "/videos/safarios.jpg",
+    "videoBytes": 4536282,
+    "check": "safarios.txt",
+    "checkedAt": "2026-10-09T02:51:49.690Z",
+    "contact": "/films/safarios-contact.jpg",
+    "spectrum": "/films/safarios-spectrum.jpg",
+    "wave": "/films/safarios-wave.png"
+   }
+  ]
+ },
+ {
+  "name": "safarios-v2",
+  "fps": 60,
+  "duration": 32,
+  "bpm": 120,
+  "beatsPerBar": 4,
+  "loop": false,
+  "cues": 51,
+  "outputs": [
+   {
+    "format": "16x9",
+    "width": 1920,
+    "height": 1080,
+    "name": "safarios-v2",
+    "video": "/videos/safarios-v2.mp4",
+    "poster": "/videos/safarios-v2.jpg",
+    "videoBytes": 4001533,
+    "check": "safarios-v2.txt",
+    "checkedAt": "2026-10-09T02:16:51.121Z",
+    "contact": "/films/safarios-v2-contact.jpg",
+    "spectrum": "/films/safarios-v2-spectrum.jpg",
+    "wave": "/films/safarios-v2-wave.png"
+   },
+   {
+    "format": "9x16",
+    "width": 1080,
+    "height": 1920,
+    "name": "safarios-v2-9x16",
+    "video": "/videos/safarios-v2-9x16.mp4",
+    "poster": "/videos/safarios-v2-9x16.jpg",
+    "videoBytes": 3630410,
+    "check": "safarios-v2-9x16.txt",
+    "checkedAt": "2026-10-09T02:20:59.266Z",
+    "contact": "/films/safarios-v2-9x16-contact.jpg",
+    "spectrum": "/films/safarios-v2-9x16-spectrum.jpg",
+    "wave": "/films/safarios-v2-9x16-wave.png"
+   },
+   {
+    "format": "1x1",
+    "width": 1080,
+    "height": 1080,
+    "name": "safarios-v2-1x1",
+    "video": "/videos/safarios-v2-1x1.mp4",
+    "poster": "/videos/safarios-v2-1x1.jpg",
+    "videoBytes": 2836776,
+    "check": "safarios-v2-1x1.txt",
+    "checkedAt": "2026-10-09T02:24:47.275Z",
+    "contact": "/films/safarios-v2-1x1-contact.jpg",
+    "spectrum": "/films/safarios-v2-1x1-spectrum.jpg",
+    "wave": "/films/safarios-v2-1x1-wave.png"
+   }
+  ]
+ }
+]
