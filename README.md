@@ -2,9 +2,9 @@
 
 **Motion graphics made as programs: every frame is a pure function of time, rendered by a headless browser, scored in code and checked by numbers, not by eye alone.**
 
-[![safarios-v2: one honeymoon booking, from a website request to fully paid (16:9, 32 s, with sound). Click to play.](media/safarios-v2-poster.jpg)](media/safarios-v2.mp4)
+[![safarios-v2: one honeymoon booking, from a website request to fully paid (16:9, 32 s, with sound). Click for the video.](media/safarios-v2-poster.jpg)](media/safarios-v2.mp4)
 
-*safarios-v2, 32 s. One honeymoon booking goes from a website request to fully paid in [Safari OS](https://safari-os-website.vercel.app), a back office for safari tour operators. Click the frame to play it (sound on).*
+*safarios-v2, 32 s. One honeymoon booking goes from a website request to fully paid in [Safari OS](https://safari-os-website.vercel.app), a back office for safari tour operators. Click the frame for the video (sound on).*
 
 ---
 
@@ -157,7 +157,7 @@ The skill asks for whatever the brief is missing, then plans, builds, checks and
 
 ## Films
 
-The videos are in [`media/`](media/). Click one to play it on GitHub. The check results come from `tools/check.py` with the current code.
+The videos are in [`media/`](media/). GitHub's file view doesn't play mp4s, so use **View raw** to download one. The check results come from `tools/check.py` with the current code.
 
 | Film | Video | Format | Checks |
 |---|---|---|---|
