@@ -180,7 +180,8 @@ The SafariOS films show fictional demo data only. The briefs and shot lists are 
 
 ## Credits
 
-- **The article this started from:** [0xMovez on X](https://x.com/0xMovez/status/2104216919033192746). Its claims are checked lesson by lesson in [docs/course](docs/course/README.md).
+- **The article this started from:** Movez's [X article](https://x.com/0xMovez/status/2104216919033192746) ([Substack copy](https://movez.substack.com/p/how-to-build-motion-design-studio)). Its claims are checked lesson by lesson in [docs/course](docs/course/README.md).
+- **[All references](docs/course/REFERENCES.md):** every source the course used, labelled as opened and checked, via the article, or standard. This includes the creators the article cites and the reference videos.
 - **Anthropic's Claude Code docs:** [memory and CLAUDE.md](https://code.claude.com/docs/en/memory), [hooks](https://code.claude.com/docs/en/hooks) and [skills](https://code.claude.com/docs/en/skills).
 - **Alternatives** if you'd rather use a framework than a bare `seek(t)`:
   - [Remotion](https://www.remotion.dev): React components rendered to video.
