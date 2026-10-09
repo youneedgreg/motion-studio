@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from 'next';
+import { Analytics } from '@vercel/analytics/next';
 import Link from 'next/link';
 import Nav from '@/components/Nav';
 import Compass from '@/components/Compass';
@@ -52,6 +53,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <p className="foot-note">Inter and Fraunces are under the SIL Open Font License. The films show fictional data only.</p>
           </div>
         </footer>
+        {/* Vercel Web Analytics: page views, no cookies. Only reports on Vercel deployments. */}
+        <Analytics />
       </body>
     </html>
   );
