@@ -171,8 +171,11 @@ async function render() {
       '-color_primaries', 'bt709', '-color_trc', 'bt709', '-colorspace', 'bt709');
     if (withAudio) ff.push('-map', '1:a', '-c:a', 'aac', '-b:a', '320k');
     ff.push('-movflags', '+faststart', '-t', String(to - from), out);
+    mkdirSync(path.dirname(out), { recursive: true });   // a fresh clone has no out/ yet
     enc = spawn('ffmpeg', ff, { stdio: ['pipe', 'inherit', 'inherit'] });
     encDone = new Promise((res) => enc.on('close', res));
+    // if ffmpeg exits early (it has printed why), stop instead of crashing on the broken pipe
+    enc.stdin.on('error', async () => { const code = await encDone; await browser.close().catch(() => {}); process.exit(code || 1); });
   }
   const pending = new Map();
   let next = first;
