@@ -2,9 +2,9 @@
 
 **Motion graphics made as programs: every frame is a pure function of time, rendered by a headless browser, scored in code and checked by numbers, not by eye alone.**
 
-[![safarios-v2: one honeymoon booking, from a website request to fully paid (16:9, 32 s, with sound). Click for the video.](media/safarios-v2-poster.jpg)](media/safarios-v2.mp4)
+[![Highlights of safarios-v2: a typed request, a cost sheet, a client's phone counting down to the trip, a circle-wipe run through the modules, and the end card.](media/demo.gif)](https://motionstudio-web.vercel.app/films/safarios-v2/)
 
-*safarios-v2, 32 s. One honeymoon booking goes from a website request to fully paid in [Safari OS](https://safari-os-website.vercel.app), a back office for safari tour operators. Click the frame for the video (sound on).*
+*14 s of highlights from safarios-v2, a 32 s film in which one honeymoon booking goes from a website request to fully paid in [Safari OS](https://safari-os-website.vercel.app), a back office for safari tour operators. The GIF has no sound: click it to watch the full film with its score on the [website](https://motionstudio-web.vercel.app), or download [the mp4](media/safarios-v2.mp4).*
 
 ---
 
